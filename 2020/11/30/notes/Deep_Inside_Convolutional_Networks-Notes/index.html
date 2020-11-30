@@ -17,21 +17,28 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"cassinihuy.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="老文章了，但是常被引。 基于梯度的方法，做了仨事：  Class Model Visualisation，一个优化问题：最大化目标标签的score，反向传播优化input image； Image-Specific Class Saliency Visualisation：提出通过目标标签的score（softmax前）在input image上的梯度，得出saliency map的可视化方法；">
+<meta property="og:type" content="article">
 <meta property="og:title" content="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps">
-<meta property="og:url" content="http://example.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/index.html">
+<meta property="og:url" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:description" content="老文章了，但是常被引。 基于梯度的方法，做了仨事：  Class Model Visualisation，一个优化问题：最大化目标标签的score，反向传播优化input image； Image-Specific Class Saliency Visualisation：提出通过目标标签的score（softmax前）在input image上的梯度，得出saliency map的可视化方法；">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
+<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat_saliency_map.png">
+<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2.jpg">
+<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2_saliency_map.png">
 <meta property="article:published_time" content="2020-11-30T09:03:38.000Z">
-<meta property="article:modified_time" content="2020-11-30T10:05:22.569Z">
+<meta property="article:modified_time" content="2020-11-30T13:26:32.259Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="深度学习可视化">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
 
-<link rel="canonical" href="http://example.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
+<link rel="canonical" href="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
 
 
 <script id="page-configurations">
@@ -150,7 +157,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
+    <link itemprop="mainEntityOfPage" href="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/crying-panda.gif">
@@ -174,7 +181,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-11-30 17:03:38 / Modified: 18:05:22" itemprop="dateCreated datePublished" datetime="2020-11-30T17:03:38+08:00">2020-11-30</time>
+              <time title="Created: 2020-11-30 17:03:38 / Modified: 21:26:32" itemprop="dateCreated datePublished" datetime="2020-11-30T17:03:38+08:00">2020-11-30</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -197,7 +204,46 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <a id="more"></a>
+        <p>老文章了，但是常被引。</p>
+<p>基于梯度的方法，做了仨事：</p>
+<ol>
+<li>Class Model Visualisation，一个优化问题：最大化目标标签的score，反向传播优化input image；</li>
+<li>Image-Specific Class Saliency Visualisation：提出通过目标标签的score（softmax前）在input image上的梯度，得出saliency map的可视化方法；</li>
+<li>Relation to Deconvolutional Networks：说明其generalize了deconv的可视化方法。</li>
+</ol>
+<a id="more"></a>
+<h2 id="Class-Model-Visualisation"><a href="#Class-Model-Visualisation" class="headerlink" title="Class Model Visualisation"></a>Class Model Visualisation</h2><p>有一个已经训练完成的模型，求解以下问题生成该类别的在该模型下的可视化图：</p>
+<script type="math/tex; mode=display">\mathop{\arg\min}\limits_I S_c(I)-\lambda||I||^2_2</script><p>其中$S_c(I)$表示input image在该model下的score（softmax前，以仅可视化目标类别的特征，而不抑制其余类别的特征）。</p>
+<h2 id="Image-Specific-Class-Saliency-Visualisation"><a href="#Image-Specific-Class-Saliency-Visualisation" class="headerlink" title="Image-Specific Class Saliency Visualisation"></a>Image-Specific Class Saliency Visualisation</h2><p>在已有模型$S_c$的情况下，给定输入图像$I_0$，通过</p>
+<script type="math/tex; mode=display">\frac{\partial S_c}{\partial I}\bigg|_{I_0}</script><p>作为可视化结果。</p>
+<p>可以将此可视化结果看作为非线性模型的线性近似，即在线性模型</p>
+<script type="math/tex; mode=display">y=w^Tx+b</script><p>下，$y$作为目标类别的score，$w$为权重（列向量），则可将$w$作为可视化结果，即对于x的saliency map。</p>
+<p>将非线性模型$S_c$看作线性模型有：</p>
+<script type="math/tex; mode=display">S_c(I)\approx w^Tx+b</script><p>即对$S_c$做一阶展开。</p>
+<h3 id="类别特征图提取"><a href="#类别特征图提取" class="headerlink" title="类别特征图提取"></a>类别特征图提取</h3><p>对于灰度图，直接使用上述公式；若是三通道，则是使用$M_{i,j}=\max\limits_c relu(w_{i,j,c})$，因为saliency map是针对pixel而言，对于每个pixel的不同通道，其中的最大值表示该pixel的最大显著性。</p>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>代码大改自<a target="_blank" rel="noopener" href="https://github.com/ivanmontero/visualize-saliency，基于keras。">https://github.com/ivanmontero/visualize-saliency，基于keras。</a></p>
+<p>首先写几个操作组成：</p>
+<p>导入库：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> backend <span class="keyword">as</span> K</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> activations</span><br></pre></td></tr></table></figure></p>
+<p>归一化：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalize</span>(<span class="params">array</span>):</span></span><br><span class="line">    arr_min = np.<span class="built_in">min</span>(array)</span><br><span class="line">    arr_max = np.<span class="built_in">max</span>(array)</span><br><span class="line">    <span class="keyword">return</span> (array - arr_min) / (arr_max - arr_min + K.epsilon())</span><br></pre></td></tr></table></figure></p>
+<p>去除softmax层：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linearize_activation</span>(<span class="params">model</span>):</span></span><br><span class="line">    model.layers[-<span class="number">1</span>].activation = activations.linear</span><br><span class="line">    <span class="keyword">return</span> model</span><br></pre></td></tr></table></figure></p>
+<p>计算score相对于input image的梯度:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_gradient</span>(<span class="params">model, output_index, input_image</span>):</span></span><br><span class="line">    input_tensor = model.<span class="built_in">input</span></span><br><span class="line">    output_tensor = model.output</span><br><span class="line"></span><br><span class="line">    loss_fn = output_tensor[:, output_index]</span><br><span class="line"></span><br><span class="line">    grad_fn = K.gradients(loss_fn, input_tensor)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    compute_fn = K.function([input_tensor],</span><br><span class="line">                            [loss_fn, grad_fn])</span><br><span class="line"></span><br><span class="line">    computed_values = compute_fn([input_image])</span><br><span class="line">    loss, grads = computed_values</span><br><span class="line">    print(loss, grads)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> grads</span><br></pre></td></tr></table></figure></p>
+<p>生成可视化图，有个trick是由于grads太小，所以用1去减一下，可视化效果更好：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">visualize_saliency</span>(<span class="params">model, output_index, input_image, custom_objects=<span class="literal">None</span></span>):</span></span><br><span class="line">    model = linearize_activation(model, custom_objects)</span><br><span class="line">    grads = compute_gradient(model, output_index, input_image)</span><br><span class="line">    channel_idx = <span class="number">1</span> <span class="keyword">if</span> K.image_data_format() == <span class="string">&#x27;channels_first&#x27;</span> <span class="keyword">else</span> -<span class="number">1</span></span><br><span class="line">    grads = np.maximum(<span class="number">0</span>, grads)</span><br><span class="line">    grads = np.<span class="built_in">max</span>(grads, axis=channel_idx)</span><br><span class="line">    </span><br><span class="line">    grads = <span class="number">1.0</span> - grads</span><br><span class="line">    <span class="keyword">return</span> normalize(grads)[<span class="number">0</span>]</span><br></pre></td></tr></table></figure></p>
+<p>main函数：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> keras.applications <span class="keyword">import</span> vgg16</span><br><span class="line">    <span class="keyword">from</span> keras.preprocessing.image <span class="keyword">import</span> load_img</span><br><span class="line">    <span class="keyword">from</span> keras.preprocessing.image <span class="keyword">import</span> img_to_array</span><br><span class="line">    <span class="keyword">from</span> keras.applications.imagenet_utils <span class="keyword">import</span> decode_predictions</span><br><span class="line">    <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">    filename = <span class="string">&#x27;cat2.jpg&#x27;</span> <span class="comment">#285</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 载入图像</span></span><br><span class="line">    original = load_img(filename, target_size=(<span class="number">224</span>, <span class="number">224</span>))</span><br><span class="line">    numpy_image = img_to_array(original)</span><br><span class="line">    image_batch = np.expand_dims(numpy_image, axis=<span class="number">0</span>)</span><br><span class="line">    processed_image = vgg16.preprocess_input(image_batch.copy())</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 正向传播（仅作演示）</span></span><br><span class="line">    vgg_model = vgg16.VGG16(weights=<span class="string">&#x27;imagenet&#x27;</span>)</span><br><span class="line">    predictions = vgg_model.predict(processed_image)</span><br><span class="line">    label_vgg = decode_predictions(predictions)</span><br><span class="line">    print(label_vgg)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 反向传播，生成saliency map</span></span><br><span class="line">    saliency_map = visualize_saliency(vgg_model, <span class="number">285</span>, processed_image)</span><br><span class="line">    plt.matshow(saliency_map, cmap=<span class="string">&#x27;gray&#x27;</span>)</span><br><span class="line">    plt.savefig(<span class="string">&#x27;cat_saliency_map.png&#x27;</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure></p>
+<p>最后得到的效果如下：</p>
+<p><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg" alt="一只猫.jpg"><br><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat_saliency_map.png" alt="猫的显著图"></p>
+<h2 id="Relation-to-Deconvolutional-Networks"><a href="#Relation-to-Deconvolutional-Networks" class="headerlink" title="Relation to Deconvolutional Networks"></a>Relation to Deconvolutional Networks</h2><p>用$X_n$表示一网络的第$n$层正向传播时的输出，用$R_n$表示一卷积网络的反卷积网络的第n层（正向来看的序数）输出，有如下关系：</p>
+<ol>
+<li>对于卷积层，第n的梯度为$\frac{\partial f}{\partial X_n}=\frac{\partial f}{\partial X_{n+1}}\star \hat{K_n}$即$=R_n=R_{n+1}\star R_n$，即与deconv网络等价；</li>
+<li>对于ReLU层，反向传播时，第n层梯度$\frac{\partial f}{\partial X_n}=\frac{\partial f}{\partial X_n}\cdot\mathbb{1}(X_{n+1}&gt;0)$；而deconv网络为$R_n=R_{n+1}\cdot \mathbb{1}(R_{n+1})$。一个要求正向传播的特征大于零，另一则是梯度大于零。</li>
+<li>对于池化层，由于deconv的switch的存在，所以等价。</li>
+</ol>
+<p>然后作者说，除了ReLU，其余等价，且由于本文可以处理dense层，所以更general：</p>
+<blockquote>
+<p>We can conclude that apart from the RELU layer, computing the approximate feature map reconstruction Rn using a DeconvNet is equivalent to computing the derivative ∂f /∂Xn using backpropagation, which is a part of our visualisation algorithms. Thus, gradient-based visualisation can be seen as the generalisation of that of [13], since the gradient-based techniques can be applied to<br>the visualisation of activities in any layer, not just a convolutional one. In particular, in this paper<br>we visualised the class score neurons in the final fully-connected layer.</p>
+</blockquote>
+<h2 id="笔记总结"><a href="#笔记总结" class="headerlink" title="笔记总结"></a>笔记总结</h2><p>起因是对grad-cam中噪声的成因感兴趣，应该是由于背景信息中存在相似的pattern使得卷积核会提取到一点特征，如下面的显著图：</p>
+<p><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2.jpg" alt="一只猫.jpg"><br><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2_saliency_map.png" alt="猫的显著图"></p>
+<p>白色背景的显著图无噪声。</p>
 
     </div>
 
@@ -278,6 +324,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-Model-Visualisation"><span class="nav-number">1.</span> <span class="nav-text">Class Model Visualisation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image-Specific-Class-Saliency-Visualisation"><span class="nav-number">2.</span> <span class="nav-text">Image-Specific Class Saliency Visualisation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB%E7%89%B9%E5%BE%81%E5%9B%BE%E6%8F%90%E5%8F%96"><span class="nav-number">2.1.</span> <span class="nav-text">类别特征图提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relation-to-Deconvolutional-Networks"><span class="nav-number">3.</span> <span class="nav-text">Relation to Deconvolutional Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">笔记总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -387,6 +434,63 @@
 
 
   
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
