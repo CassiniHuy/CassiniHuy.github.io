@@ -17,28 +17,28 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"cassinihuy.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="老文章了，但是常被引。 基于梯度的方法，做了仨事：  Class Model Visualisation，一个优化问题：最大化目标标签的score，反向传播优化input image； Image-Specific Class Saliency Visualisation：提出通过目标标签的score（softmax前）在input image上的梯度，得出saliency map的可视化方法；">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps">
-<meta property="og:url" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/index.html">
+<meta property="og:url" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
 <meta property="og:description" content="老文章了，但是常被引。 基于梯度的方法，做了仨事：  Class Model Visualisation，一个优化问题：最大化目标标签的score，反向传播优化input image； Image-Specific Class Saliency Visualisation：提出通过目标标签的score（softmax前）在input image上的梯度，得出saliency map的可视化方法；">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
-<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat_saliency_map.png">
-<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2.jpg">
-<meta property="og:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2_saliency_map.png">
+<meta property="og:image" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
+<meta property="og:image" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat_saliency_map.png">
+<meta property="og:image" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2.jpg">
+<meta property="og:image" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2_saliency_map.png">
 <meta property="article:published_time" content="2020-11-30T09:03:38.000Z">
-<meta property="article:modified_time" content="2020-11-30T13:26:32.259Z">
+<meta property="article:modified_time" content="2020-12-01T02:00:14.454Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="深度学习可视化">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
+<meta name="twitter:image" content="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat.jpg">
 
-<link rel="canonical" href="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
+<link rel="canonical" href="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
 
 
 <script id="page-configurations">
@@ -157,7 +157,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/crying-panda.gif">
@@ -179,10 +179,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2020-11-30 17:03:38 / Modified: 21:26:32" itemprop="dateCreated datePublished" datetime="2020-11-30T17:03:38+08:00">2020-11-30</time>
+              <time title="Created: 2020-11-30 17:03:38" itemprop="dateCreated datePublished" datetime="2020-11-30T17:03:38+08:00">2020-11-30</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-01 10:00:14" itemprop="dateModified" datetime="2020-12-01T10:00:14+08:00">2020-12-01</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -239,11 +245,12 @@
 </ol>
 <p>然后作者说，除了ReLU，其余等价，且由于本文可以处理dense层，所以更general：</p>
 <blockquote>
-<p>We can conclude that apart from the RELU layer, computing the approximate feature map reconstruction Rn using a DeconvNet is equivalent to computing the derivative ∂f /∂Xn using backpropagation, which is a part of our visualisation algorithms. Thus, gradient-based visualisation can be seen as the generalisation of that of [13], since the gradient-based techniques can be applied to<br>the visualisation of activities in any layer, not just a convolutional one. In particular, in this paper<br>we visualised the class score neurons in the final fully-connected layer.</p>
+<p>We can conclude that apart from the RELU layer, computing the approximate feature map reconstruction Rn using a DeconvNet is equivalent to computing the derivative ∂f /∂Xn using backpropagation, which is a part of our visualisation algorithms. Thus, gradient-based visualisation can be seen as the generalisation of that of [13], since the gradient-based techniques can be applied to the visualisation of activities in any layer, not just a convolutional one. In particular, in this paper we visualised the class score neurons in the final fully-connected layer.</p>
 </blockquote>
 <h2 id="笔记总结"><a href="#笔记总结" class="headerlink" title="笔记总结"></a>笔记总结</h2><p>起因是对grad-cam中噪声的成因感兴趣，应该是由于背景信息中存在相似的pattern使得卷积核会提取到一点特征，如下面的显著图：</p>
 <p><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2.jpg" alt="一只猫.jpg"><br><img src="/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/cat2_saliency_map.png" alt="猫的显著图"></p>
 <p>白色背景的显著图无噪声。</p>
+<h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
 
     </div>
 
@@ -259,7 +266,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/" title="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps">http://cassinihuy.github.io/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/</a>
+    <a href="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/" title="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps">http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
@@ -282,7 +289,10 @@
     <a href="/2020/11/30/hello-world/" rel="prev" title="Hello World">
       <i class="fa fa-chevron-left"></i> Hello World
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/30/notes/cam_notes/" rel="next" title="论文笔记：CAM、Grad-CAM、Grad-CAM++和Smooth Grad-CAM++">
+      论文笔记：CAM、Grad-CAM、Grad-CAM++和Smooth Grad-CAM++ <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -341,7 +351,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-Model-Visualisation"><span class="nav-number">1.</span> <span class="nav-text">Class Model Visualisation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image-Specific-Class-Saliency-Visualisation"><span class="nav-number">2.</span> <span class="nav-text">Image-Specific Class Saliency Visualisation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB%E7%89%B9%E5%BE%81%E5%9B%BE%E6%8F%90%E5%8F%96"><span class="nav-number">2.1.</span> <span class="nav-text">类别特征图提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relation-to-Deconvolutional-Networks"><span class="nav-number">3.</span> <span class="nav-text">Relation to Deconvolutional Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">笔记总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Class-Model-Visualisation"><span class="nav-number">1.</span> <span class="nav-text">Class Model Visualisation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Image-Specific-Class-Saliency-Visualisation"><span class="nav-number">2.</span> <span class="nav-text">Image-Specific Class Saliency Visualisation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB%E7%89%B9%E5%BE%81%E5%9B%BE%E6%8F%90%E5%8F%96"><span class="nav-number">2.1.</span> <span class="nav-text">类别特征图提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">2.2.</span> <span class="nav-text">实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relation-to-Deconvolutional-Networks"><span class="nav-number">3.</span> <span class="nav-text">Relation to Deconvolutional Networks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">笔记总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94"><span class="nav-number">5.</span> <span class="nav-text">—-</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -357,7 +367,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
