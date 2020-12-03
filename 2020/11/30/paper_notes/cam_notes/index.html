@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心思想，和自己的想法。">
+  <meta name="description" content="由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心，不包括实验。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论文笔记：CAM、Grad-CAM、Grad-CAM++和Smooth Grad-CAM++">
 <meta property="og:url" content="http://weichengan.com/2020/11/30/paper_notes/cam_notes/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
-<meta property="og:description" content="由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心思想，和自己的想法。">
+<meta property="og:description" content="由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心，不包括实验。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-11-30T15:22:42.000Z">
-<meta property="article:modified_time" content="2020-12-01T07:02:22.349Z">
+<meta property="article:modified_time" content="2020-12-03T02:43:18.119Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="深度学习可视化">
 <meta name="twitter:card" content="summary">
@@ -182,7 +182,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-12-01 15:02:22" itemprop="dateModified" datetime="2020-12-01T15:02:22+08:00">2020-12-01</time>
+                <time title="Modified: 2020-12-03 10:43:18" itemprop="dateModified" datetime="2020-12-03T10:43:18+08:00">2020-12-03</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -205,7 +205,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心思想，和自己的想法。</p>
+        <p>由CAM引出的基于梯度的类别激活图可视化方法：Grad-CAM、Grad-CAM++和Smooth Grad-CAM++，这里只抽取核心，不包括实验。</p>
 <a id="more"></a>
 <hr>
 <h2 id="Learning-Deep-Features-for-Discriminative-Localization"><a href="#Learning-Deep-Features-for-Discriminative-Localization" class="headerlink" title="Learning Deep Features for Discriminative Localization"></a>Learning Deep Features for Discriminative Localization</h2><p>CAM，提出使用最后一层卷积来可视化网络的预测过程。</p>
@@ -221,7 +221,7 @@
 <hr>
 <h2 id="Grad-CAM-Visual-Explanations-from-Deep-Networks-via-Gradient-based-Localization"><a href="#Grad-CAM-Visual-Explanations-from-Deep-Networks-via-Gradient-based-Localization" class="headerlink" title="Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization"></a>Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization</h2><p>CAM对于网络结构有要求，不采用GAP方法不能使用；且只能可视化最后一层的卷积。</p>
 <p>作者提出基于梯度的方法Grad-CAM化解了对于网络结构的上述限制：</p>
-<p>在CAM中，不同特征图特征线性和的权重是使用训练得到的GAP，非常直观；在Grad-CAM中，使用梯度来衡量不同特征图结合的重要性，即：</p>
+<p>在CAM中，不同特征图特征线性和的权重是使用训练得到的GAP；在Grad-CAM中，使用特征图梯度的GAP值来衡量不同特征图结合的重要性，即：</p>
 <script type="math/tex; mode=display">w^k_c=\sum_{x,y}\frac{\partial S_c}{\partial f^k(x,y)}</script><p>于是Grad-CAM有：</p>
 <script type="math/tex; mode=display">M_c(x,y)=ReLU(\sum_k w^k_c f^k(x,y))</script><p>梯度的正负表示对score增大的正反影响及其程度，最后保留正值，即仅可视化对score的正面影响；值得注意的是，若在权重计算过程中，将梯度取负值，则可视化结果是对于类别c预测起负面作用。</p>
 <p>下证明Grad-CAM是CAM的一个推广，即使用GAP层时，两者等价：</p>
@@ -231,29 +231,27 @@
 <p>$w^k_c=\sum_{x,y}\frac{\partial S_c}{\partial f^k(x,y)}=\sum_{x,y}\frac{1}{Z}\hat{w}^k_c=\hat{w}^k_c$;</p>
 <p>其中$Z=\sum_{x,y}1$</p>
 <hr>
-<h2 id="Grad-CAM-Generalized-Gradient-based-Visual-Explanations-for-Deep-Convolutional-Networks"><a href="#Grad-CAM-Generalized-Gradient-based-Visual-Explanations-for-Deep-Convolutional-Networks" class="headerlink" title="Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks"></a>Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks</h2><p>Grad-CAM沿用了CAM的思路（strictly generalize），在CAM中，由于所有网络都是使用的GAP，所以计算权重时对特征图梯度GAP是正确的，因为GAP网络就是这样work的；但是对于一众full connect网络却不对，由于全连接网络在全连接之前普遍会先flatten，同一个特征图，不同的位置权重不同，所以网络传播的时候，GAP梯度的方法就并不能代表网络实际的决策过程。</p>
-<p>而作者的activation如下，$Y_c$是类别c的预测分数，则假设如下：</p>
+<h2 id="Grad-CAM-Generalized-Gradient-based-Visual-Explanations-for-Deep-Convolutional-Networks"><a href="#Grad-CAM-Generalized-Gradient-based-Visual-Explanations-for-Deep-Convolutional-Networks" class="headerlink" title="Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks"></a>Grad-CAM++: Generalized Gradient-based Visual Explanations for Deep Convolutional Networks</h2><p>Grad-CAM严格推广了CAM，在CAM中，由于所有网络都是使用的GAP，所以计算权重时对特征图梯度GAP与之等价；但是对于其他如full Connected网络而言，同一个特征图，不同坐标下权重不同，GAP没有考虑这种差异。</p>
+<p>Grad-CAM++的可视化方法如下，$Y_c$是类别c的预测分数，有：</p>
 <ol>
-<li><p>预测目标类别的score计算如下，同一个特征图使用相同的权重$w^k_c$：</p>
+<li><p>预测目标类别的score，假设由不同特征图GAP后，再线性加权得到：</p>
 <script type="math/tex; mode=display">Y_c=\sum_k w^k_c\sum_{x,y}f^k(x,y)</script></li>
-<li><p>权重$w^k_c$计算如下，不同x,y对权重贡献不同：</p>
+<li><p>线性加权的权重$w^k_c$计算如下，对于某个特征图，由特征图内的激活值线性加权而来：</p>
 <script type="math/tex; mode=display">w^k_c=\sum_{x,y}\alpha^k_c(x,y)\cdot ReLU(\frac{\partial S_c}{\partial f^k(x,y)})</script></li>
-<li><p>则有</p>
+<li><p>则有最终目标类别的score计算如下：</p>
 <script type="math/tex; mode=display">Y_c=\sum_k \sum_{x,y}\alpha^k_c(x,y)\cdot ReLU(\frac{\partial S_c}{\partial f^k(x,y)})\sum_{i,j}f^k(i,j) \tag{*}</script></li>
 </ol>
 <p>在作者的假设下，有表达式(*)，其中$Y_c$不针对特定的计算方式，例如，softmax之前之后都可作为假设，或者其他网络结构计算得到的某个值作为表达式(*)的$Y_c$。在不同的假设前提下，得到的类别激活图的意义也发生变化。</p>
-<p>在文中，梯度加权求和之前就使用了ReLU，以仅可视化对目标类别预测的正向影响（类似于deconv），而在Grad-CAM中，是在梯度求和后再ReLU。由三角不等式可知，前者值大于等于后者；前者消除了负面的梯度的影响，使得可视化结果更显著。</p>
-<p>作者给出Grad-CAM++的计算方式如下：</p>
-<script type="math/tex; mode=display">M_c(x,y)=\sum_k w^k_c f^k(x,y)=\sum_k w^k_c\cdot f^k(x,y) \tag{**}</script><p>下面求得$\alpha^k_c(x,y)$的表达式, 该值是已有模型内生的值，所以肯定是可求的。通过对(*)两边对$f^k(x,y)$求导，得到一阶偏导和二阶偏导俩表达式，然后解出$\alpha^k_c(x,y)$，请参见原论文。</p>
+<p>和CAM和Grad-CAM一样，输入图像的Grad-CAM++由不同通道的激活值线性加权求和得到：</p>
+<script type="math/tex; mode=display">M_c(x,y)=\sum_k w^k_c f^k(x,y)=\sum_k w^k_c\cdot f^k(x,y) \tag{**}</script><p>$\alpha^k_c(x,y)$的具体求法是：通过(*)式的两边对$f^k(x,y)$求导，得到一阶偏导和二阶偏导俩表达式，然后解出$\alpha^k_c(x,y)$（请参见原论文）。</p>
 <hr>
-<h2 id="Smooth-Grad-CAM-An-Enhanced-Inference-Level-Visualization-Technique-for-Deep-Convolutional-Neural-Network-Models"><a href="#Smooth-Grad-CAM-An-Enhanced-Inference-Level-Visualization-Technique-for-Deep-Convolutional-Neural-Network-Models" class="headerlink" title="Smooth Grad-CAM++: An Enhanced Inference Level Visualization Technique for Deep Convolutional Neural Network Models"></a>Smooth Grad-CAM++: An Enhanced Inference Level Visualization Technique for Deep Convolutional Neural Network Models</h2><p>卷积核在提取特征的过程中，使用连续的值提取特征，在input image的“不重要”的背景中，也存在一些特征会使得卷积核提取到正的值，反向传播时会表现为“噪声”。可以参考我的<a href="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/" title="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification">上一篇笔记</a>。</p>
+<h2 id="Smooth-Grad-CAM-An-Enhanced-Inference-Level-Visualization-Technique-for-Deep-Convolutional-Neural-Network-Models"><a href="#Smooth-Grad-CAM-An-Enhanced-Inference-Level-Visualization-Technique-for-Deep-Convolutional-Neural-Network-Models" class="headerlink" title="Smooth Grad-CAM++: An Enhanced Inference Level Visualization Technique for Deep Convolutional Neural Network Models"></a>Smooth Grad-CAM++: An Enhanced Inference Level Visualization Technique for Deep Convolutional Neural Network Models</h2><p>卷积核在提取特征的过程中，使用连续的值提取特征，在输入图像被关注物体的背景中，也存在一些特征会激活神经元，求梯度时会表现为“噪声”。可以参考<a href="http://weichengan.com/2020/11/30/notes/Deep_Inside_Convolutional_Networks-Notes/" title="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification">上一篇笔记</a>中的情况。</p>
 <p> 作者提出使用SMOOTHGRAD的方法来抑制噪声，强化特征，即输入图像$I$的CAM为：</p>
 <script type="math/tex; mode=display">M_c(I)=\frac{1}{n}\sum_1^n M_c(I+\mathcal{N}(0,\sigma^2))</script><p>其中添加的是高斯噪声，即式(**)的计算过程如下，$I$是输入的图像：</p>
-<script type="math/tex; mode=display">M_c(x,y)=\sum_k w^k_c f^k(x,y)=\sum_k w^k_c\cdot \frac{1}{n}\sum^n_1(f^k_{x,y}|_{I+\mathcal{N}(0,\sigma^2)})</script><p>由于添加了噪声，所以更能够突出对卷积核sensitive的部分，所以可以进行choosing neurons的操作，在论文中为，针对某个卷积核，针对特征图某个(x,y)，可以单独对其生成可视化结果。可能的应用场景在debugging上。</p>
+<script type="math/tex; mode=display">M_c(x,y)=\sum_k w^k_c f^k(x,y)=\sum_k w^k_c\cdot \frac{1}{n}\sum^n_1(f^k_{x,y}|_{I+\mathcal{N}(0,\sigma^2)})</script><p>由于添加了噪声，所以更能够突出特征图在噪声中robust的部分，这部分被认为更重要；此方法可以用来比较图片不同位置对神经元的激活强度，所以可以进行choosing neurons的操作，在论文中为，针对某个卷积核，针对特征图某个(x,y)，可以对其生成可视化结果。可能的应用场景在debugging上。</p>
 <hr>
-<h2 id="笔记总结"><a href="#笔记总结" class="headerlink" title="笔记总结"></a>笔记总结</h2><p>上面四篇论文一脉相承，按论文的思路，SM Grad-CAM++理论上是效果最好的，因为从CAM到SM Grad-CAM++，是越来越general的，除了某些细节外。</p>
-<p>CAM是最符合模型结构的，可视化的过程直接应用模型参数，但因此应用场景很局限；从Grad-CAM开始寻求一种更通用的可视化方法，直接给出从待可视化的特征图到类别分数之间的映射关系，然后在定义了这种映射关系的情况下，给出可视化的结果，在Grad-CAM++中体现很明显；SM Grad-CAM++则只是对梯度方法的噪声做了改进。</p>
-<p>可视化的目的是什么</p>
+<h2 id="笔记总结"><a href="#笔记总结" class="headerlink" title="笔记总结"></a>笔记总结</h2><p>上面四篇论文一脉相承，按论文的思路，SM Grad-CAM++理论上是效果最好的，因为从CAM到SM Grad-CAM++，是越来越推广的，除了某些细节外。</p>
+<p>假设目标类别的score是由特征图线性加权得到，然后重点在于权重在各自的假设下的不同的求法。</p>
 <h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
 
     </div>
