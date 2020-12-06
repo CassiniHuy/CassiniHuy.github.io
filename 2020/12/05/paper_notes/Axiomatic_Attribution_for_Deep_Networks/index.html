@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文Axiomatic Attribution for Deep Networks阅读笔记，主要内容涉及网络输出和输入特征归因（attribution）的两个公理和integrate gradients方法，包含我自己补充的命题证明。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Axiomatic Attribution for Deep Networks">
+<meta property="og:url" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/index.html">
+<meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:description" content="论文Axiomatic Attribution for Deep Networks阅读笔记，主要内容涉及网络输出和输入特征归因（attribution）的两个公理和integrate gradients方法，包含我自己补充的命题证明。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/cat.jpg">
+<meta property="og:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/grad.png">
+<meta property="og:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/int_grad.png">
+<meta property="article:published_time" content="2020-12-05T14:25:57.000Z">
+<meta property="article:modified_time" content="2020-12-06T10:46:00.550Z">
+<meta property="article:author" content="Cassini Huy">
+<meta property="article:tag" content="深度学习可视化">
+<meta property="article:tag" content="神经网络可解释性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/cat.jpg">
+
+<link rel="canonical" href="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记：Axiomatic Attribution for Deep Networks | 渭城岸的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">渭城岸的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">年轻人要讲武德</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/crying-panda.gif">
+      <meta itemprop="name" content="Cassini Huy">
+      <meta itemprop="description" content="记录一些不成熟的想法">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="渭城岸的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记：Axiomatic Attribution for Deep Networks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-12-05 22:25:57" itemprop="dateCreated datePublished" datetime="2020-12-05T22:25:57+08:00">2020-12-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-12-06 18:46:00" itemprop="dateModified" datetime="2020-12-06T18:46:00+08:00">2020-12-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1703.01365">Axiomatic Attribution for Deep Networks</a>阅读笔记，主要内容涉及网络输出和输入特征归因（attribution）的两个公理和integrate gradients方法，包含我自己补充的命题证明。</p>
+<a id="more"></a>
+<hr>
+<h2 id="1-Motivation-and-Summary-of-Results"><a href="#1-Motivation-and-Summary-of-Results" class="headerlink" title="1. Motivation and Summary of Results"></a>1. Motivation and Summary of Results</h2><p>对于问题的定义：</p>
+<blockquote>
+<p>$\textbf{Definition 1.}$ Formally, suppose we have a function $F:\mathbb{R}^n\to [0,1]$ that represents a deep network, and an input $x=(x_1,\cdots,x_n)\in \mathbb{R}^n$. An attribution of the prediction at input x relative to a baseline input $x_0$ is a vector $A_F(x,x_0)=(a_1,\cdots,a_n)\in \mathbb{R}^n$ where $a_i$ is the contribution of $x_i$ to the prediction $F(x)$.</p>
+</blockquote>
+<p>即，对于一个从$R^n$到实数域的映射，在$R^n$找到一个向量$a$作为输入向量$x$的归因（attribution）。注意，在一个baseline的情况下，作者说明：</p>
+<blockquote>
+<p>$\textbf{Remark 1.}$ Let us briefly examine the need for the baseline in the definition of the attribution problem. A common way for humans to perform attribution relies on counterfactual intuition. When we assign blame to a certain cause we implicitly consider the absence of the cause as a baseline for comparing outcomes. In a deep network, we model the absence using a single baseline input. For most deep<br>networks, a natural baseline exists in the input space where the prediction is neutral. For instance, in object recognition<br>networks, it is the black image. The need for a baseline has also been pointed out by prior work on attribution (Shrikumar et al., 2016; Binder et al., 2016).</p>
+</blockquote>
+<p>即baseline是必要的，它总是显式地或隐式地出现。</p>
+<h2 id="2-Two-Fundamental-Axioms"><a href="#2-Two-Fundamental-Axioms" class="headerlink" title="2. Two Fundamental Axioms"></a>2. Two Fundamental Axioms</h2><p>下面提出上文定义的归因问题，其归因方法需要满足的两条公理。</p>
+<h3 id="2-1-Axiom-Sensitivity-a"><a href="#2-1-Axiom-Sensitivity-a" class="headerlink" title="2.1. Axiom: Sensitivity(a)"></a>2.1. Axiom: Sensitivity(a)</h3><blockquote>
+<p>An attribution method satisfies Sensitivity(a) if for every input and baseline that differ in one feature but have different predictions then the differing feature should be given a non-zero attribution.</p>
+</blockquote>
+<p>即输入和baseline在某个特征不同时，且输出不同，则该特征应该有一个非零的归因。</p>
+<p>例如，基于ReLU的梯度的方法使用梯度乘特征来作为该特征的归因，会违反此公理。例如$y=1-ReLU(1-x)$，在$x&gt;1$时，梯度为零，则归因（因为有梯度作为因子）为零，而在0和2时，输出为0和1；再如基于BP的方法，如DeConvNets、Guided BP，和基于梯度的方法类似，由于ReLU的存在使得不满足sensitivity。</p>
+<h3 id="2-2-Axiom-Implementation-Invariance"><a href="#2-2-Axiom-Implementation-Invariance" class="headerlink" title="2.2. Axiom: Implementation Invariance"></a>2.2. Axiom: Implementation Invariance</h3><blockquote>
+<p>Two networks are functionally equivalent if their outputs are equal for all inputs, despite having very different implementations. Attribution methods should satisfy Implementation Invariance, i.e., the attributions are always identical for two functionally equivalent networks.</p>
+</blockquote>
+<p>即归因只和模型输入输出的函数相关，不应由实现的差异而不同。</p>
+<p>例如，某些模型架构，可能存在参数和函数非单射的情况，导致因为初始化或其他情况下，同一个函数有不同的参数，则归因方法不应该由于参数不同而归因结果不同。如LRP、DeepLIFT方法。</p>
+<h2 id="3-Our-Method-Integrated-Gradients"><a href="#3-Our-Method-Integrated-Gradients" class="headerlink" title="3. Our Method: Integrated Gradients"></a>3. Our Method: Integrated Gradients</h2><p>在$\mathbb{R}^n$中，考虑baseline输入$x’$和输入$x$之间直线路径，对函数（模型）$F$其路径上的梯度积分，定义输入$x$在$i$维度上的integratedGrads如下：</p>
+<script type="math/tex; mode=display">integratedGrads_i(x)::=(x_i-x'_i)\int_0^1\frac{\partial F(x'+\alpha(x-x'))}{\partial x_i}d\alpha \tag{1}</script><h3 id="Axiom-Completeness"><a href="#Axiom-Completeness" class="headerlink" title="Axiom: Completeness"></a>Axiom: Completeness</h3><blockquote>
+<p>Integrated gradients satisfy an axiom called completeness that the attributions add up to the difference between the output of $F$ at the input $x$ and the baseline $x_0$</p>
+</blockquote>
+<p>即所有的归因值加起来等于输入和baseline输入的输出之差。</p>
+<p>对于文中定义的integratedGrads，满足completeness：</p>
+<blockquote>
+<p>$\textbf{Proposition 1.}$ If $F:\mathbb{R}^n\to\mathbb{R}$ is differentiable almost everywhere then:<br>$\sum^n_1 integratedGrads_i(x)=F(x)-F(x_0)$</p>
+</blockquote>
+<p>神经网络由有限个不可微点的函数复合而成，是几乎处处可微的实函数。</p>
+<p>定义$\gamma=(\gamma_1,\cdots,\gamma_n): [0,1]\to\mathbb{R}^n$为一路径，在这里$\gamma(\alpha)=(\gamma_1(\alpha),\cdots,\gamma_n(\alpha))=x’+\alpha(x-x’)$，于是由链式法则有:</p>
+<script type="math/tex; mode=display">\begin{aligned}
+    \sum^n_1 integratedGrads_i(x) 
+    &=\sum^n_1(\gamma_i(1)-\gamma_i(0))\int_0^1\frac{\partial F(\gamma)}{\partial \gamma_i}d\alpha \\ 
+    &=\sum^n_1\int_0^1\frac{\partial F(\gamma)}{\partial \gamma_i}\frac{\partial \gamma_i}{\partial \alpha}d\alpha \\ 
+    &=\int_0^1\frac{\partial F(\gamma)}{\partial \gamma}\cdot\frac{\partial \gamma}{\partial \alpha}d\alpha \\
+    &=\int_0^1\frac{\partial F(\gamma)}{\partial \alpha}d\alpha \\
+    &=F(\gamma(1))-F(\gamma(0))=F(x)-F(x')
+\end{aligned} \tag{2}</script><p>对于模型，baseline一般要求其$F(x_0)\approx 0$，这样更为方便。</p>
+<blockquote>
+<p>$\textbf{Remark 2.}$ Integrated gradients satisfies Sensivity(a) because Completeness implies Sensivity(a) and is thus a strengthening of the Sensitivity(a) axiom. This is because Sensitivity(a) refers to a case where the baseline and the input differ only in one variable, for which Completeness asserts that the difference in the two output values is equal to the attribution to this variable. Attributions generated by integrated gradients satisfy Implementation Invariance since they are based only on the gradients of the function represented by the network.</p>
+</blockquote>
+<p>即completeness成立是sensitivity成立的充分条件，因为式1有：</p>
+<script type="math/tex; mode=display">\begin{aligned}
+    integratedGrads_i(x) 
+    &=(\gamma_i(1)-\gamma_i(0))\int_0^1\frac{\partial F(\gamma)}{\partial \gamma_i}d\alpha \\ 
+    &=\int_0^1\frac{\partial F(\gamma)}{\partial \gamma_i}\frac{\partial \gamma_i}{\partial \alpha}d\alpha \\ 
+    &=\int_0^1\frac{\partial F(\gamma(\gamma_i))}{\partial\alpha} d\alpha \\
+    &=F(\gamma(\gamma_i(1)))-F(\gamma(\gamma_i(0)))
+\end{aligned} \tag{3}</script><p>当$x$和$x’$只有$i$维度不同时，则有$F(\gamma(\gamma_i(1)))-F(\gamma(\gamma_i(0)))=F(\gamma(1))-F(\gamma(0))=F(x)-F(x’)$，所以sensitivity成立。</p>
+<p>integratedGrads归因方法满足Implementation Invariance，因为其只和函数的梯度相关。</p>
+<h2 id="4-Uniqueness-of-Integrated-Gradients"><a href="#4-Uniqueness-of-Integrated-Gradients" class="headerlink" title="4. Uniqueness of Integrated Gradients"></a>4. Uniqueness of Integrated Gradients</h2><p>指出对归因方法经验性的评价方法，无法区分数据、模型和归因方法的影响，所以作者提出公理性的方法来解决此问题；再指出只有Path method的唯一性，且由于对称性，integrate gradients方法是最准确（canonical）的方法。</p>
+<h3 id="4-1-Path-Methods"><a href="#4-1-Path-Methods" class="headerlink" title="4.1. Path Methods"></a>4.1. Path Methods</h3><p>指出一般的Path Method，及其PathIntegratedGrads定义：</p>
+<blockquote>
+<p>Given a path function $\gamma$, path integrated gradients are obtained by integrating the gradients along the path $\gamma(\alpha)$ for $\alpha \in [0,1]$. Formally, path integrated gradients along the $i$th dimension for an input $x$ is defined as follows: </p>
+<p>$PathIntegratedGrads\gamma_i(x)::=\int_0^1\frac{\partial F(\gamma(\alpha))}{\partial\gamma_i(\alpha)}\frac{\partial\gamma_i(\alpha)}{\partial\alpha}d\alpha$, where $\frac{\partial F(\gamma(\alpha))}{\partial\gamma_i(\alpha)}$ is the gradient of F along the $i$th dimension at $x$.</p>
+</blockquote>
+<p>也满足两条公理：</p>
+<blockquote>
+<p>$\textbf{Remark 3.}$ All path methods satisfy Implementation Invariance. This follows from the fact that they are defined using the underlying gradients, which do not depend on the implementation. They also satisfy Completeness (the proof is similar to that of Proposition 1) and Sensitvity(a) which is implied by Completeness (see Remark 2).</p>
+</blockquote>
+<p>证明见上一部分。</p>
+<p>再补充规定，不依赖的变量，其归因应该为零（是implementation invariance的充分条件）：</p>
+<blockquote>
+<p>$\textbf{Axiom: Sensitivity(b).}$ (called Dummy in <a target="_blank" rel="noopener" href="https://link.springer.com/article/10.1007%2Fs001820400173">(Friedman, 2004)</a>) If the function implemented by the deep network does not depend (mathematically) on some variable, then the attribution to that variable is always zero.</p>
+</blockquote>
+<p>规定线性性：</p>
+<blockquote>
+<p>$\textbf{Axiom: Linearity.}$ Suppose that we linearly composed two deep networks modeled by the functions f1 and f2 to form a third network that models the function a×f1+b×f2, i.e., a linear combination of the two networks. Then we’d like the attributions for a × f1 + b × f2 to be the weighted sum of the attributions for f1 and f2 with weights a and b respectively. Intuitively, we would like the attributions to preserve any linearity within the network.</p>
+</blockquote>
+<p>满足上诉sensitivity、implementation invariance、completeness、linearity，Path Method是唯一的方法：</p>
+<blockquote>
+<p>$\textbf{Proposition 2.}$ (Theorem 1 <a target="_blank" rel="noopener" href="https://link.springer.com/article/10.1007%2Fs001820400173">(Friedman, 2004)</a>) Path methods are the only attribution methods that always satisfy Implementation Invariance, Sensitivity(b), Linearity, and Completeness.</p>
+</blockquote>
+<h3 id="4-2-Integrated-Gradients-is-Symmetry-Preserving"><a href="#4-2-Integrated-Gradients-is-Symmetry-Preserving" class="headerlink" title="4.2. Integrated Gradients is Symmetry-Preserving"></a>4.2. Integrated Gradients is Symmetry-Preserving</h3><p>定义对称性：</p>
+<blockquote>
+<p>$\textbf{Symmetry-Preserving.}$ Two input variables are symmetric $w.r.t.$ a function if swapping them does not change the function. For instance, $x$ and $y$ are symmetric $w.r.t.$ F if and only if $F(x, y) = F(y, x)$ for all values of $x$ and $y$. An attribution method is symmetry preserving, if for all inputs that have identical values for symmetric variables and baselines that have identical values for symmetric variables, the symmetric variables receive identical attributions.</p>
+</blockquote>
+<p>说明IntegrateGradients满足对称性：</p>
+<blockquote>
+<p>$\textbf{Theorem 1.}$ Integrated gradients is the unique path method that is symmetry-preserving.</p>
+</blockquote>
+<h2 id="5-Applying-Integrated-Gradients"><a href="#5-Applying-Integrated-Gradients" class="headerlink" title="5. Applying Integrated Gradients"></a>5. Applying Integrated Gradients</h2><p>近似计算的方法：</p>
+<script type="math/tex; mode=display">IntegratedGrads^{approx}_i(x)::=(x_i-x'_i)\times\sum^m_{k=1}\frac{\partial F(x'+\frac{k}{m}\times(x-x'))}{x_i}\times\frac{1}{m}</script><p>实验证明一般m在20和300之间。</p>
+<h2 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h2><p>代码如下：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> tensorflow <span class="keyword">as</span> tf</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> backend <span class="keyword">as</span> K</span><br><span class="line"><span class="keyword">from</span> keras <span class="keyword">import</span> activations</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">normalize</span>(<span class="params">array</span>):</span></span><br><span class="line">    arr_min = np.<span class="built_in">min</span>(array)</span><br><span class="line">    arr_max = np.<span class="built_in">max</span>(array)</span><br><span class="line">    <span class="keyword">return</span> (array - arr_min) / (arr_max - arr_min + K.epsilon())</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">linearize_activation</span>(<span class="params">model, custom_objects=<span class="literal">None</span></span>):</span></span><br><span class="line">    model.layers[-<span class="number">1</span>].activation = activations.linear</span><br><span class="line">    <span class="keyword">return</span> model</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">compute_gradient</span>(<span class="params">model, output_index, input_image</span>):</span></span><br><span class="line">    input_tensor = model.<span class="built_in">input</span></span><br><span class="line">    output_tensor = model.output</span><br><span class="line"></span><br><span class="line">    loss_fn = output_tensor[:, output_index]</span><br><span class="line"></span><br><span class="line">    grad_fn = K.gradients(loss_fn, input_tensor)[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    compute_fn = K.function([input_tensor], [grad_fn])</span><br><span class="line"></span><br><span class="line">    grads = compute_fn([input_image])[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> grads</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">int_visualize_saliency</span>(<span class="params">model, output_index, input_image, custom_objects=<span class="literal">None</span></span>):</span></span><br><span class="line">    model = linearize_activation(model, custom_objects)</span><br><span class="line">    grads = compute_gradient(model, output_index, input_image)</span><br><span class="line">    channel_idx = <span class="number">1</span> <span class="keyword">if</span> K.image_data_format() == <span class="string">&#x27;channels_first&#x27;</span> <span class="keyword">else</span> -<span class="number">1</span></span><br><span class="line"></span><br><span class="line">    attri = np.transpose(grads, (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">0</span>))</span><br><span class="line">    attri = np.mean(attri, axis=<span class="number">3</span>)              <span class="comment"># 梯度平均值</span></span><br><span class="line">    attri = attri * input_image[-<span class="number">1</span>]             <span class="comment"># 乘以x-x&#x27;，x&#x27;=0</span></span><br><span class="line">    attri = np.<span class="built_in">sum</span>(attri, axis=channel_idx)     <span class="comment"># 把三个通道的值加起来</span></span><br><span class="line">    attri = np.maximum(<span class="number">0</span>, attri)                <span class="comment"># 只显示正值</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">1.0</span> - normalize(attri)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="keyword">from</span> keras.applications <span class="keyword">import</span> vgg16</span><br><span class="line">    <span class="keyword">from</span> keras.preprocessing.image <span class="keyword">import</span> load_img</span><br><span class="line">    <span class="keyword">from</span> keras.preprocessing.image <span class="keyword">import</span> img_to_array</span><br><span class="line">    <span class="keyword">from</span> keras.applications.imagenet_utils <span class="keyword">import</span> decode_predictions</span><br><span class="line">    <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line">    filename = <span class="string">&#x27;cat.jpg&#x27;</span> <span class="comment">#285</span></span><br><span class="line">    n_intervals = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">    original = load_img(filename, target_size=(<span class="number">224</span>, <span class="number">224</span>))</span><br><span class="line">    numpy_image = img_to_array(original)</span><br><span class="line">    image_batch = np.expand_dims(numpy_image, axis=<span class="number">0</span>)</span><br><span class="line">    intervals = np.linspace(<span class="number">0</span>, <span class="number">1</span>, n_intervals + <span class="number">1</span>)[<span class="number">1</span>:].reshape((n_intervals, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">    image_batch = np.tile(image_batch, (n_intervals, <span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>)) * n_intervals</span><br><span class="line">    processed_image = vgg16.preprocess_input(image_batch.copy())</span><br><span class="line"></span><br><span class="line">    vgg_model = vgg16.VGG16(weights=<span class="string">&#x27;imagenet&#x27;</span>)</span><br><span class="line">    predictions = vgg_model.predict(processed_image)</span><br><span class="line">    label_vgg = decode_predictions(predictions)</span><br><span class="line">    print(label_vgg)</span><br><span class="line"></span><br><span class="line">    saliency_map = int_visualize_saliency(vgg_model, <span class="number">285</span>, processed_image)</span><br><span class="line">    plt.matshow(saliency_map, cmap=<span class="string">&#x27;gray&#x27;</span>)</span><br><span class="line">    plt.savefig(<span class="string">&#x27;cat_saliency_map_int.png&#x27;</span>)</span><br><span class="line">    plt.show()</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>在m=10时，分别是原图，gradients和integrated gradients方法：</p>
+<p><img src="/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/cat.jpg" alt="一只猫"></p>
+<p><img src="/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/grad.png" alt="gradients"></p>
+<p><img src="/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/int_grad.png" alt="integrated gradients"></p>
+<h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Cassini Huy
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/" title="论文笔记：Axiomatic Attribution for Deep Networks">http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag"># 深度学习可视化</a>
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" rel="tag"># 神经网络可解释性</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/01/reading_notes/captial_nd_surplus_value/" rel="prev" title="《政治经济学概论》阅读笔记：资本和剩余价值">
+      <i class="fa fa-chevron-left"></i> 《政治经济学概论》阅读笔记：资本和剩余价值
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Motivation-and-Summary-of-Results"><span class="nav-number">1.</span> <span class="nav-text">1. Motivation and Summary of Results</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Two-Fundamental-Axioms"><span class="nav-number">2.</span> <span class="nav-text">2. Two Fundamental Axioms</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Axiom-Sensitivity-a"><span class="nav-number">2.1.</span> <span class="nav-text">2.1. Axiom: Sensitivity(a)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Axiom-Implementation-Invariance"><span class="nav-number">2.2.</span> <span class="nav-text">2.2. Axiom: Implementation Invariance</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Our-Method-Integrated-Gradients"><span class="nav-number">3.</span> <span class="nav-text">3. Our Method: Integrated Gradients</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Axiom-Completeness"><span class="nav-number">3.1.</span> <span class="nav-text">Axiom: Completeness</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Uniqueness-of-Integrated-Gradients"><span class="nav-number">4.</span> <span class="nav-text">4. Uniqueness of Integrated Gradients</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Path-Methods"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. Path Methods</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Integrated-Gradients-is-Symmetry-Preserving"><span class="nav-number">4.2.</span> <span class="nav-text">4.2. Integrated Gradients is Symmetry-Preserving</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Applying-Integrated-Gradients"><span class="nav-number">5.</span> <span class="nav-text">5. Applying Integrated Gradients</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">实验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94"><span class="nav-number">7.</span> <span class="nav-text">—-</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cassini Huy"
+      src="/images/crying-panda.gif">
+  <p class="site-author-name" itemprop="name">Cassini Huy</p>
+  <div class="site-description" itemprop="description">记录一些不成熟的想法</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cassini Huy</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
