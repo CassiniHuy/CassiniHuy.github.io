@@ -20,20 +20,22 @@
     var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="徐禾《政治经济学概论》阅读笔记。 资本是能够带来剩余价值的价值，剩余价值源自劳动力的使用带来的价值增殖。">
+  <meta name="description" content="论文Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)的阅读笔记。 核心思想$I$是输入空间，$H$是特征空间（最后一层卷积，提取得到的高层次特征），$\mathbb{R}$是输出空间，卷积分类器可以表示为如下复合函数： f&#x3D;h(g):I\st">
 <meta property="og:type" content="article">
-<meta property="og:title" content="《政治经济学概论》阅读笔记：资本和剩余价值">
-<meta property="og:url" content="http://weichengan.com/2020/12/01/reading_notes/captial_nd_surplus_value/index.html">
+<meta property="og:title" content="论文笔记：Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)">
+<meta property="og:url" content="http://weichengan.com/2020/12/13/paper_notes/tcav/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
-<meta property="og:description" content="徐禾《政治经济学概论》阅读笔记。 资本是能够带来剩余价值的价值，剩余价值源自劳动力的使用带来的价值增殖。">
+<meta property="og:description" content="论文Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)的阅读笔记。 核心思想$I$是输入空间，$H$是特征空间（最后一层卷积，提取得到的高层次特征），$\mathbb{R}$是输出空间，卷积分类器可以表示为如下复合函数： f&#x3D;h(g):I\st">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-12-01T12:24:08.000Z">
-<meta property="article:modified_time" content="2020-12-10T07:44:53.347Z">
+<meta property="article:published_time" content="2020-12-13T02:14:10.000Z">
+<meta property="article:modified_time" content="2020-12-19T08:24:25.609Z">
 <meta property="article:author" content="Cassini Huy">
-<meta property="article:tag" content="政治经济学概论">
+<meta property="article:tag" content="神经网络">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="可解释性">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://weichengan.com/2020/12/01/reading_notes/captial_nd_surplus_value/">
+<link rel="canonical" href="http://weichengan.com/2020/12/13/paper_notes/tcav/">
 
 
 <script id="page-configurations">
@@ -46,7 +48,7 @@
   };
 </script>
 
-  <title>《政治经济学概论》阅读笔记：资本和剩余价值 | 渭城岸的博客</title>
+  <title>论文笔记：Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV) | 渭城岸的博客</title>
   
 
 
@@ -152,7 +154,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2020/12/01/reading_notes/captial_nd_surplus_value/">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2020/12/13/paper_notes/tcav/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/crying-panda.gif">
@@ -165,7 +167,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          《政治经济学概论》阅读笔记：资本和剩余价值
+          论文笔记：Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)
         </h1>
 
         <div class="post-meta">
@@ -175,14 +177,14 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-12-01 20:24:08" itemprop="dateCreated datePublished" datetime="2020-12-01T20:24:08+08:00">2020-12-01</time>
+              <time title="Created: 2020-12-13 10:14:10" itemprop="dateCreated datePublished" datetime="2020-12-13T10:14:10+08:00">2020-12-13</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2020-12-10 15:44:53" itemprop="dateModified" datetime="2020-12-10T15:44:53+08:00">2020-12-10</time>
+                <time title="Modified: 2020-12-19 16:24:25" itemprop="dateModified" datetime="2020-12-19T16:24:25+08:00">2020-12-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -190,7 +192,7 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">阅读笔记</span></a>
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
                 </span>
             </span>
 
@@ -205,21 +207,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>徐禾《政治经济学概论》阅读笔记。</p>
-<p><strong>资本是能够带来剩余价值的价值，剩余价值源自劳动力的使用带来的价值增殖。</strong></p>
-<h2 id><a href="#" class="headerlink" title></a><a id="more"></a></h2><h2 id="价值"><a href="#价值" class="headerlink" title="价值"></a>价值</h2><p>在资本论中，价值指物化了的人类劳动，说一物有价值，是指该物含有物化了的人类劳动。例如一件商品是由自然资源经由人类劳动生产的，其就具有价值。</p>
-<p>商品是具有使用价值和交换价值的物品，前者是具体的，难以比较的；后者是价值在交换中的体现，可以比较的。</p>
-<p>货币是一般等价物，即同样拥有价值，按照其价值大小交换。</p>
-<p>劳动力是一种特殊的商品，没有生产资料的人，通过出卖自己的劳动力换取生活资料；拥有生产资料的人，通过交换价值（即工资）换取劳动力，并使用这种商品的使用价值。</p>
-<hr>
-<h2 id="剩余价值"><a href="#剩余价值" class="headerlink" title="剩余价值"></a>剩余价值</h2><p>A是劳动力的价值，B是劳动力之外生产资料的价值，C是使用A和B生产得到的商品价值，G是用于购买A和B的货币价值，G’交换出C后的货币价值。</p>
-<p>有G→A+B→C→G’</p>
-<p>流通过程中按照等价交换原则，则从G→A+B和C→G’价值不发生变化。而如果A+B→C这个商品生产过程中价值不变，则G→G’整个过程中价值不变。</p>
-<p>实际上，如果商品生产过程中没有创造新的价值，则整个经济体就没有新的价值被创造，这会导致价值总量的趋零。故在A+B→C中会创造新的价值。</p>
-<p>在A+B→C过程中，A是劳动力的价值，B是非劳动力生产资料的价值，由于<strong>只有劳动可以创造价值</strong>（因为价值的定义），则C其中的价值增量是劳动力的使用价值带来的，即劳动力的使用价值（具体的）是创造新的价值（因为价值的定义）。</p>
-<p>在这个过程中，A被称为可变资本，B被称为不变资本；G’- G被称为剩余价值，G被称为资本，资本是能够带来剩余价值的价值。</p>
-<hr>
-<h2 id="笔记总结"><a href="#笔记总结" class="headerlink" title="笔记总结"></a>笔记总结</h2><p>这便是客观事实。</p>
+        <p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1711.11279.pdf">Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)</a>的阅读笔记。</p>
+<h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>$I$是输入空间，$H$是特征空间（最后一层卷积，提取得到的高层次特征），$\mathbb{R}$是输出空间，卷积分类器可以表示为如下复合函数：</p>
+<script type="math/tex; mode=display">f=h(g):I\stackrel{g}{\longrightarrow}H\stackrel{h}{\longrightarrow}\mathbb{R}</script><p>设$v$为$H$中指向某概念的向量（概念样本和随机样本在$H$的线性边界的单位法向量），则tcav即为求$h$沿着$v$的方向导数。</p>
+<p>将方向导数在样本点$x\in I$的值，解释为样本$x$受概念影响的程度。</p>
 <h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
 
     </div>
@@ -236,7 +227,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="http://weichengan.com/2020/12/01/reading_notes/captial_nd_surplus_value/" title="《政治经济学概论》阅读笔记：资本和剩余价值">http://weichengan.com/2020/12/01/reading_notes/captial_nd_surplus_value/</a>
+    <a href="http://weichengan.com/2020/12/13/paper_notes/tcav/" title="论文笔记：Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)">http://weichengan.com/2020/12/13/paper_notes/tcav/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
@@ -247,7 +238,9 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E6%94%BF%E6%B2%BB%E7%BB%8F%E6%B5%8E%E5%AD%A6%E6%A6%82%E8%AE%BA/" rel="tag"># 政治经济学概论</a>
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 神经网络</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" rel="tag"># 可解释性</a>
           </div>
 
         
@@ -256,13 +249,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/11/30/paper_notes/cam_notes/" rel="prev" title="论文笔记：CAM、Grad-CAM、Grad-CAM++和Smooth Grad-CAM++">
-      <i class="fa fa-chevron-left"></i> 论文笔记：CAM、Grad-CAM、Grad-CAM++和Smooth Grad-CAM++
+    <a href="/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/" rel="prev" title="论文笔记：Axiomatic Attribution for Deep Networks">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Axiomatic Attribution for Deep Networks
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/" rel="next" title="论文笔记：Axiomatic Attribution for Deep Networks">
-      论文笔记：Axiomatic Attribution for Deep Networks <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -321,7 +311,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%B7%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%A9%E4%BD%99%E4%BB%B7%E5%80%BC"><span class="nav-number">3.</span> <span class="nav-text">剩余价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%94%E8%AE%B0%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">笔记总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94"><span class="nav-number">5.</span> <span class="nav-text">—-</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94"><span class="nav-number">2.</span> <span class="nav-text">—-</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -436,6 +426,61 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
