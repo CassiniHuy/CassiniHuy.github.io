@@ -29,7 +29,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://weichengan.com/2020/12/21/paper_notes/semantic_hierarchy/pipeline.png">
 <meta property="article:published_time" content="2020-12-21T07:22:05.000Z">
-<meta property="article:modified_time" content="2020-12-21T07:59:17.152Z">
+<meta property="article:modified_time" content="2020-12-21T08:02:46.859Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="神经网络">
 <meta property="article:tag" content="深度学习">
@@ -183,7 +183,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2020-12-21 15:22:05 / Modified: 15:59:17" itemprop="dateCreated datePublished" datetime="2020-12-21T15:22:05+08:00">2020-12-21</time>
+              <time title="Created: 2020-12-21 15:22:05 / Modified: 16:02:46" itemprop="dateCreated datePublished" datetime="2020-12-21T15:22:05+08:00">2020-12-21</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -211,7 +211,7 @@
 <a id="more"></a>
 <h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>生成器是如下的函数，其中$\mathcal{Z},\mathcal{X}$分别是线性空间latent space和image space：</p>
 <script type="math/tex; mode=display">G:\mathcal{Z}\to \mathcal{X}</script><p>（某个variation factor的）分类器是如下函数，其中$\mathcal{S}$被称为semantic space，是实数域的子集：</p>
-<script type="math/tex; mode=display">F:\mathcal{X}\to \mathcal{S}</script><p>采样$A=\{z^1,\cdots,z^K\}\subset\mathcal{Z}<script type="math/tex">\Longrightarrow$得到$F(G(A))\subset\mathbb{R}</script>\Longrightarrow$找到$A_{F(G(A))&gt;0}$和$A_{F(G(A))&lt;0}$线性分类边界的单位法向量$n$。</p>
+<script type="math/tex; mode=display">F:\mathcal{X}\to \mathcal{S}</script><p>采样$A=\{z^1,\cdots,z^K\}\subset\mathcal{Z}\Longrightarrow$得到$F(G(A))\subset\mathbb{R}\Longrightarrow$找到$A_{F(G(A))&gt;0}$和$A_{F(G(A))&lt;0}$线性分类边界的单位法向量$n$。</p>
 <p>可以使用该variation factor控制生成样本该语义的“含量”，进而再借用$F$采样量化该variation factor对目标模型分析的相关度:</p>
 <script type="math/tex; mode=display">\Delta s_i=\frac{1}{K}\sum^K_{k=1}max(F_i(G(z^k+\lambda n_i))-F_i(G(z^k)),0)</script><p><img src="/2020/12/21/paper_notes/semantic_hierarchy/pipeline.png" alt="流程图"></p>
 <h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
