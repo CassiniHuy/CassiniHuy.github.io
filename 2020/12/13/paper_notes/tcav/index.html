@@ -28,7 +28,7 @@
 <meta property="og:description" content="论文Interpretability Beyond Feature Attribution:Quantitative Testing with Concept Activation Vectors (TCAV)的阅读笔记。 使用“概念激活向量”提供卷积分类模型的解释，一种全局的解释方法。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-12-13T02:14:10.000Z">
-<meta property="article:modified_time" content="2021-01-07T08:52:39.252Z">
+<meta property="article:modified_time" content="2021-01-13T11:30:10.100Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="神经网络">
 <meta property="article:tag" content="深度学习">
@@ -179,13 +179,6 @@
 
               <time title="Created: 2020-12-13 10:14:10" itemprop="dateCreated datePublished" datetime="2020-12-13T10:14:10+08:00">2020-12-13</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-01-07 16:52:39" itemprop="dateModified" datetime="2021-01-07T16:52:39+08:00">2021-01-07</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -213,7 +206,6 @@
 <h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><p>$I$是输入空间，$H$是特征空间（最后一层卷积，提取得到的高层次特征），$\mathbb{R}$是输出空间，卷积分类器可以表示为如下复合函数：</p>
 <script type="math/tex; mode=display">f=h(g):I\stackrel{g}{\longrightarrow}H\stackrel{h}{\longrightarrow}\mathbb{R}</script><p>设$v$为$H$中指向某概念的向量（概念样本和随机样本在$H$的线性边界的单位法向量），则计算函数$h$沿着$v$的方向导数，然后使用一批该类别的样本计算TCAV。</p>
 <p>将方向导数在样本点$x\in I$的值，解释为样本$x$受概念影响的程度。</p>
-<h2 id="—"><a href="#—" class="headerlink" title="—-"></a>—-</h2><p>有问题和想法一起交流呀( •̀ ω •́ )✧：<em>cassiniwei@outlook.com</em></p>
 
     </div>
 
@@ -316,7 +308,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">核心思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%94"><span class="nav-number">2.</span> <span class="nav-text">—-</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="nav-number">1.</span> <span class="nav-text">核心思想</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -342,7 +334,7 @@
         <span class="site-state-item-name">categories</span></a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
