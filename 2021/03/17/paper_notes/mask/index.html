@@ -20,19 +20,23 @@
     var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="记录一些不成熟的想法。2020年11月30日，北京。">
+  <meta name="description" content="论文Interpretable Explanations of Black Boxes by Meaningful Perturbation阅读笔记，论文提出了一种optimization-based的可视化方法。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://weichengan.com/2020/11/30/hello-world/index.html">
+<meta property="og:title" content="论文笔记：Interpretable Explanations of Black Boxes by Meaningful Perturbation">
+<meta property="og:url" content="http://weichengan.com/2021/03/17/paper_notes/mask/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
-<meta property="og:description" content="记录一些不成熟的想法。2020年11月30日，北京。">
+<meta property="og:description" content="论文Interpretable Explanations of Black Boxes by Meaningful Perturbation阅读笔记，论文提出了一种optimization-based的可视化方法。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-11-30T03:23:52.939Z">
-<meta property="article:modified_time" content="2020-12-01T00:52:53.839Z">
+<meta property="article:published_time" content="2021-03-17T02:27:25.000Z">
+<meta property="article:modified_time" content="2021-03-17T03:03:44.026Z">
 <meta property="article:author" content="Cassini Huy">
+<meta property="article:tag" content="神经网络">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="可解释性">
+<meta property="article:tag" content="可视化">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://weichengan.com/2020/11/30/hello-world/">
+<link rel="canonical" href="http://weichengan.com/2021/03/17/paper_notes/mask/">
 
 
 <script id="page-configurations">
@@ -45,7 +49,7 @@
   };
 </script>
 
-  <title>Hello World | 渭城岸的博客</title>
+  <title>论文笔记：Interpretable Explanations of Black Boxes by Meaningful Perturbation | 渭城岸的博客</title>
   
 
 
@@ -151,7 +155,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2020/11/30/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2021/03/17/paper_notes/mask/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/crying-panda.gif">
@@ -164,7 +168,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          论文笔记：Interpretable Explanations of Black Boxes by Meaningful Perturbation
         </h1>
 
         <div class="post-meta">
@@ -174,7 +178,7 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2020-11-30 11:23:52" itemprop="dateCreated datePublished" datetime="2020-11-30T11:23:52+08:00">2020-11-30</time>
+              <time title="Created: 2021-03-17 10:27:25" itemprop="dateCreated datePublished" datetime="2021-03-17T10:27:25+08:00">2021-03-17</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -182,7 +186,7 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
                 </span>
             </span>
 
@@ -197,7 +201,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>记录一些不成熟的想法。<br>2020年11月30日，北京。</p>
+        <p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1704.03296">Interpretable Explanations of Black Boxes by Meaningful Perturbation</a>阅读笔记，论文提出了一种optimization-based的可视化方法。</p>
+<a id="more"></a>
+<h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>优势在于方法本身的可解释性很强，缺陷在于optimization需要几百次的前向和反向传播。</p>
+<h2 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h2><p>Deletion Game，即删去输入尽量少的部分，同时降低尽量多的目标类别分数。</p>
+<p>优化问题为：</p>
+<script type="math/tex; mode=display">min_{m\in[0,1]^\Lambda}\lambda_1||1-m||_1+\lambda_2\sum_{u\in\Lambda}||\Delta m(u)||^\beta_\beta+\mathbb{E}_\tau[f_c(\Phi(x_0(\cdot-\tau), M))]</script><p>即使得mask的1范数尽量低、生成的解释$e$（mask下的输入）的目标类别分数尽量低；同时满足图片的完全变分范数尽量低，即使得mask变化更为平缓；在迭代的过程中，还对输入加入了噪声。</p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>见<a target="_blank" rel="noopener" href="https://github.com/jacobgil/pytorch-explain-black-box">GitHub</a>.</p>
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.02686">Interpretable and Fine-Grained Visual Explanations for Convolutional Neural Networks</a>沿用了MASK的思路，在MASK原始Deletion Game的基础上，加入了Defending against Adversarial Evidence的思路，即使得解释$e$在每层的激活强度，都低于原图，以保证解释$e$具有的特征，原图一定具有。</p>
+<p>不同于MASK，生成的解释是fine-grained的，因为去除了tv-norm。</p>
 
     </div>
 
@@ -213,7 +225,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="http://weichengan.com/2020/11/30/hello-world/" title="Hello World">http://weichengan.com/2020/11/30/hello-world/</a>
+    <a href="http://weichengan.com/2021/03/17/paper_notes/mask/" title="论文笔记：Interpretable Explanations of Black Boxes by Meaningful Perturbation">http://weichengan.com/2021/03/17/paper_notes/mask/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
@@ -223,17 +235,23 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 神经网络</a>
+              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+              <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" rel="tag"># 可解释性</a>
+              <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" rel="tag"># 可视化</a>
+          </div>
 
         
 
 
         
     <div class="post-nav">
-      <div class="post-nav-item"></div>
       <div class="post-nav-item">
-    <a href="/2020/11/30/paper_notes/Deep_Inside_Convolutional_Networks-Notes/" rel="next" title="论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps">
-      论文笔记：Deep Inside Convolutional Networks: Visualising Image Classification Models and Saliency Maps <i class="fa fa-chevron-right"></i>
+    <a href="/2021/01/13/suibi/relu_smoothgrad/" rel="prev" title="一种ReLU一阶导的光滑处理方法">
+      <i class="fa fa-chevron-left"></i> 一种ReLU一阶导的光滑处理方法
     </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -292,6 +310,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Intro"><span class="nav-number">1.</span> <span class="nav-text">Intro</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method"><span class="nav-number">2.</span> <span class="nav-text">Method</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code"><span class="nav-number">3.</span> <span class="nav-text">Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD"><span class="nav-number">4.</span> <span class="nav-text">后续</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -406,6 +425,61 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 
