@@ -31,7 +31,7 @@
 <meta property="og:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/grad.png">
 <meta property="og:image" content="http://weichengan.com/2020/12/05/paper_notes/Axiomatic_Attribution_for_Deep_Networks/int_grad.png">
 <meta property="article:published_time" content="2020-12-05T14:25:57.000Z">
-<meta property="article:modified_time" content="2021-01-13T11:30:05.995Z">
+<meta property="article:modified_time" content="2021-06-08T11:55:52.102Z">
 <meta property="article:author" content="Cassini Huy">
 <meta property="article:tag" content="神经网络">
 <meta property="article:tag" content="深度学习">
@@ -264,6 +264,7 @@
 </blockquote>
 <p>即归因只和模型输入输出的函数相关，不应由实现的差异而不同。</p>
 <p>例如，某些模型架构，可能存在参数和函数非单射的情况，导致因为初始化或其他情况下，同一个函数有不同的参数，则归因方法不应该由于参数不同而归因结果不同。如LRP、DeepLIFT方法。</p>
+<p><em>注：作者这个implementation invariance应该是指，如果两个模型实际是同一个映射（输入输出对应关系相同），那么解释应该一样，例如，使用梯度（输出直接对输入求导）作为解释是满足的（因为直接对函数求导）。作者可能主要是想要排除一种情况：比如同一个映射的两个模型，根据链式方法乘起来结果（输出对输入的梯度）是一样的，但是中间的状态不一样（链式法则相乘的项数个数、值），如果用中间的状态解释，使用了这些不同的中间项，可能会导致解释不同。</em></p>
 <h2 id="3-Our-Method-Integrated-Gradients"><a href="#3-Our-Method-Integrated-Gradients" class="headerlink" title="3. Our Method: Integrated Gradients"></a>3. Our Method: Integrated Gradients</h2><p>在$\mathbb{R}^n$中，考虑baseline输入$x’$和输入$x$之间直线路径，对函数（模型）$F$其路径上的梯度积分，定义输入$x$在$i$维度上的integratedGrads如下：</p>
 <script type="math/tex; mode=display">integratedGrads_i(x)::=(x_i-x'_i)\int_0^1\frac{\partial F(x'+\alpha(x-x'))}{\partial x_i}d\alpha \tag{1}</script><h3 id="Axiom-Completeness"><a href="#Axiom-Completeness" class="headerlink" title="Axiom: Completeness"></a>Axiom: Completeness</h3><blockquote>
 <p>Integrated gradients satisfy an axiom called completeness that the attributions add up to the difference between the output of $F$ at the input $x$ and the baseline $x_0$</p>
