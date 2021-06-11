@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文Adversarial Attacks on Copyright Detection Systems, ICML 2020阅读笔记。 使用音频对抗攻击的思路和方法，论文攻击了版权检测（Copyright Detection）系统。作者首先使用神经网络去还原了一个公开的音频指纹（Audio Fingerprint Models）提取算法，然后使用常规的对抗攻击算法攻击了这个模型（白盒），然后在放">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Adversarial Attacks on Copyright Detection Systems">
+<meta property="og:url" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/index.html">
+<meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:description" content="论文Adversarial Attacks on Copyright Detection Systems, ICML 2020阅读笔记。 使用音频对抗攻击的思路和方法，论文攻击了版权检测（Copyright Detection）系统。作者首先使用神经网络去还原了一个公开的音频指纹（Audio Fingerprint Models）提取算法，然后使用常规的对抗攻击算法攻击了这个模型（白盒），然后在放">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/architecture.png">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/whilebox_attack.png">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/black_attack_table.png">
+<meta property="article:published_time" content="2021-06-09T14:32:29.000Z">
+<meta property="article:modified_time" content="2021-06-11T04:01:13.109Z">
+<meta property="article:author" content="Cassini Huy">
+<meta property="article:tag" content="对抗攻击">
+<meta property="article:tag" content="音频对抗攻击">
+<meta property="article:tag" content="copyright">
+<meta property="article:tag" content="版权保护">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/architecture.png">
+
+<link rel="canonical" href="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>论文笔记：Adversarial Attacks on Copyright Detection Systems | 渭城岸的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">渭城岸的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">“在一切生产工具中，最强大的一种生产力是革命阶级本身。”</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-guestbook">
+
+    <a href="/guestbook/" rel="section"><i class="fa fa-book fa-fw"></i>guestbook</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/crying-panda.gif">
+      <meta itemprop="name" content="Cassini Huy">
+      <meta itemprop="description" content="记录一些不成熟的想法">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="渭城岸的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记：Adversarial Attacks on Copyright Detection Systems
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-06-09 22:32:29" itemprop="dateCreated datePublished" datetime="2021-06-09T22:32:29+08:00">2021-06-09</time>
+            </span>
+
+          
+            <span id="/2021/06/09/paper_notes/copyright_attack/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记：Adversarial Attacks on Copyright Detection Systems" title="Views">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/06/09/paper_notes/copyright_attack/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/06/09/paper_notes/copyright_attack/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>论文<a target="_blank" rel="noopener" href="http://proceedings.mlr.press/v119/saadatpanah20a.html">Adversarial Attacks on Copyright Detection Systems, ICML 2020</a>阅读笔记。</p>
+<p>使用音频对抗攻击的思路和方法，论文攻击了版权检测（Copyright Detection）系统。作者首先使用神经网络去还原了一个公开的音频指纹（Audio Fingerprint Models）提取算法，然后使用常规的对抗攻击算法攻击了这个模型（白盒），然后在放大（scale up）了一些扰动之后，黑盒攻击了谷歌的AudioTag版权检测系统和YouTube的Content ID系统。</p>
+<a id="more"></a>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>这里省略对抗样本的基本介绍。</p>
+<p>下面是有关copyright detection的一些背景信息：</p>
+<ul>
+<li>版权检测一般的方法是通过提取音频或视频的特征（指纹，fingerprint），然后与已有的特征库做对比，判断是否侵权。</li>
+<li>YouTube的Content ID系统，将对每个视频做标记（flag），方便管理。</li>
+<li>Google Jigsaw会检测并移除宣扬（promote）恐怖主义和危害（jeopardize）国家安全的视频。</li>
+<li>欧盟要求所有能够使得用户上传文字、音频和视频的服务都要有版权过滤（copyright filter）。</li>
+</ul>
+<p>版权检测系统通常是专利（proprietary），无法攻击全部的系统。论文的目标在于</p>
+<ul>
+<li>证明版权检测系统的脆弱性</li>
+<li>确定（establish）现有文献中的攻击能够潜在地利用（exploit）音视频版权检测系统。</li>
+</ul>
+<p>论文的工作：</p>
+<ul>
+<li>攻击音频版权检测系统；</li>
+<li>使用tensorflow复现了“shazam”算法（音频指纹提取），使得算法成为一个可微的神经网络；</li>
+<li>使用基于梯度的方法，白盒和黑盒攻击；</li>
+<li>黑盒攻击：足够扰动的情况下，攻击了现有的工业系统AudioTag和YouTube Content ID系统</li>
+</ul>
+<p>主页和样例：<a target="_blank" rel="noopener" href="https://www.cs.umd.edu/~tomg/projects/copyrightattack/">https://www.cs.umd.edu/~tomg/projects/copyrightattack/</a></p>
+<p>可以听出，黑盒攻击AudioTag和Content ID的音乐噪音还是明显的。</p>
+<h2 id="What-makes-copyright-detection-systems-vulnerable-to-attacks"><a href="#What-makes-copyright-detection-systems-vulnerable-to-attacks" class="headerlink" title="What makes copyright detection systems vulnerable to attacks?"></a>What makes copyright detection systems vulnerable to attacks?</h2><p>这里省略一般的对抗样本工作的介绍。</p>
+<p>版权检测系统的攻击和一般的（图片、音频）对抗攻击的区别：</p>
+<ul>
+<li>数字域的攻击：版权检测面对的数字媒体一般直接上传到服务系统（如YouTube），而不是在物理世界采样得到（如针对stop sign的攻击，需要对干扰因素鲁棒（nuisance variables）），这使得版权检测的攻击更为简单（相比较物理攻击）；</li>
+<li>开集问题：闭集问题（closed-set）的每个输入有个确定的类别与之对应，版权检测是开集（open-set）问题，大多数音频不侵权，需要被标记，系统往往采取保守的策略；</li>
+<li>高相似度下的判别：版权检测系统在具有高相似度（共享许多特征）的音频中分辨出音频是否侵权（类似于ImageNet在高相似度的图片中分类），对于对抗攻击（只需要改动更少的特征）而言，较为有利。</li>
+</ul>
+<p>上面三点，使得版权检测系统易于攻击。</p>
+<h2 id="Types-of-copyright-detection-systems"><a href="#Types-of-copyright-detection-systems" class="headerlink" title="Types of copyright detection systems"></a>Types of copyright detection systems</h2><p>版权检测系统通过提取图片、音频、视频的特征（指纹），然后与已有的特征库作比较，如果达到一定的相似度，就视为侵权（两样本相同）。提取特征的方法有两种：</p>
+<ul>
+<li>使用一个神经网络提取特征</li>
+<li>使用手动构造（hand-crafted）的特征，也可以重新解释（reinterpret）成一个神经网络</li>
+</ul>
+<p>论文断言，手动构造的音频特征并不安全。</p>
+<h2 id="Case-study-evading-audio-fingerprinting"><a href="#Case-study-evading-audio-fingerprinting" class="headerlink" title="Case study: evading audio fingerprinting"></a>Case study: evading audio fingerprinting</h2><p>下面使用神经网络还原（resemble）了一个常用的公开的音频指纹提取算法，然后进行白盒攻击，并迁移到了黑盒上（AudioTag，YouTube Content ID）。</p>
+<h3 id="Audio-fingerprinting-models"><a href="#Audio-fingerprinting-models" class="headerlink" title="Audio fingerprinting models"></a>Audio fingerprinting models</h3><p>攻击的算法是<a target="_blank" rel="noopener" href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.217.8882&amp;rep=rep1&amp;type=pdf">shazam算法</a>，广泛用于音乐识别。</p>
+<p>良好的音频指纹具有的三个性质：</p>
+<ol>
+<li>时间局部性（Temporally Localized）：使用音频的一小段区间计算得到</li>
+<li>平移不变性（Translation Invariant）：音频样本起始时间不同，但是指纹相同</li>
+<li>鲁棒性：对一定的噪声鲁棒</li>
+</ol>
+<p>shazam使用时频图峰（spectrogram peaks）的位置（针对每一时间帧而言）作为音频的指纹，对噪声鲁棒，并近似线性超稳定型（approximate linear superposability）。</p>
+<h3 id="Interpreting-the-fingerprint-extractor-as-a-CNN"><a href="#Interpreting-the-fingerprint-extractor-as-a-CNN" class="headerlink" title="Interpreting the fingerprint extractor as a CNN"></a>Interpreting the fingerprint extractor as a CNN</h3><p><img src="/2021/06/09/paper_notes/copyright_attack/architecture.png" alt="架构图"></p>
+<p>可以将上述提取特征的算法看作一组变换（线性映射），参考上面所说的前俩性质，使用CNN来还原shazam算法，有下面几层：</p>
+<p>第一层，hann窗。和标准化（hann系数加起来等于1）的hann函数做卷积，卷积核如下：</p>
+<script type="math/tex; mode=display">f_1(n)=\frac{sin^2(\frac{\pi n}{N})}{\sum^N_{i=0}sin^2(\frac{\pi i}{N})}</script><ul>
+<li>减轻不连续和不好的频谱性质（如旁瓣现象）对生成对抗样本的影响</li>
+<li>对黑盒攻击施加更加有效的扰动</li>
+</ul>
+<p>第二层，短时傅里叶变化，计算时频图。和N个Fourier核做卷积，代表不同的频率：</p>
+<script type="math/tex; mode=display">f_2(k,n)=e^{-i2\pi kn / N},k\in\{0,1,\cdots,N-1\}</script><ul>
+<li>然后取其幅度谱即可（即模长）。</li>
+<li>设输入信号为$x$，定义此时得到的特征为$\phi(x)$</li>
+</ul>
+<p>然后使用maxpooling来提取局部最大值（沿着频率方向，即对频率特征进行一维池化），然后使用最大值的位置作为指纹，即如下的等式：</p>
+<script type="math/tex; mode=display">\phi(x)=maxpool(\phi(x))</script><blockquote>
+<p>The resulting binary map of local maxima locations is the fingerprint of the signal and can be used to search for a signal against a database of previously processed signals. </p>
+</blockquote>
+<p>记这个二进制指纹为$\psi(x)$。</p>
+<h3 id="Formulating-the-adversarial-loss-function"><a href="#Formulating-the-adversarial-loss-function" class="headerlink" title="Formulating the adversarial loss function"></a>Formulating the adversarial loss function</h3><p>对抗样本的损失函数怎么设计？如何衡量两个指纹的相似性？</p>
+<p>论文使用Lp范数，具体而言使用$l_{\infty}$来限制扰动的强度，使得：</p>
+<script type="math/tex; mode=display">|\delta|_{\infty}\le \epsilon</script><p>参考hamming距离（二进制位数不同的个数）来衡量两个二进制指纹的相似性，使用下面的式子作为两个指纹（adversarial&amp;original，设为$x$和$y$）的相似度损失：</p>
+<script type="math/tex; mode=display">J(x,y)=|\phi(x) \cdot \psi(x) \cdot \psi(y)|</script><ul>
+<li><p>即只有$x,y$共同的最大值位置的值相加，只利用这些地方的神经元。</p>
+</li>
+<li><p>对于白盒攻击，目前设计的损失是足够的，但是对于黑盒攻击，不够鲁棒。针对某一时间帧，只需要对抗样本的频峰（peaks）向高/低频移动一个单位就可以使得该频峰对loss的贡献为零。</p>
+</li>
+</ul>
+<p>因此，论文采取了下面的loss函数，来使得对抗音频的peaks离真（original）样本的peaks更远。</p>
+<script type="math/tex; mode=display">J(x,y)=\sum_i(ReLU(c-(max_{|j\le w_1|}\phi(i+j;x)-max_{|j\le w_2|}\phi(i+j;x)))\cdot \psi(i;y))</script><p>记相减项为$\Delta$。<br>$\Delta = max_{|j\le w_1|}\phi(i+j;x)-max_{|j\le w_2|}\phi(i+j;x)\ge 0$</p>
+<ul>
+<li>式子是针对某一时间帧而言的。</li>
+<li>（可以看作）这里有两个最大池化层，池化宽度分别为$w_1,w_2$且$w_1\ge w_2$，这使得$\Delta$值非负，其中$c$为常数，控制扰动的幅度。</li>
+<li>在上式中，如果$i$位置对抗样本的peak存在于$w_2$宽度内，则$\Delta=0$；否则，存在于$w_2$之外，$w_1$之内，则$\Delta&gt;0$。这使得最大值倾向于出现在离原样本peak较远的位置，更为鲁棒。</li>
+</ul>
+<p>论文使用了下面的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Smooth_maximum">smoothed max function</a>来代替实际的max函数：</p>
+<script type="math/tex; mode=display">S_{\alpha}=\frac{\sum^n_{i=1}x_i e^{\alpha x_i}}{\sum^n_{i=1} e^{\alpha x_i}}</script><ul>
+<li>$\alpha\to\infty$，该函数逼近真实max函数。</li>
+<li>论文说是为了使max可微？但是maxpooling是可以进行反向传播的。这里应该是为了使得生成的对抗样本更为鲁棒，因为smoothed版本能够考虑到除了最大值神经元之外的神经元（重要性依值大小而定），更具有抗干扰的能力（加了噪声之后？）。</li>
+<li>论文中的$\alpha$一直取1.</li>
+</ul>
+<h3 id="Crafting-the-evasion-attack"><a href="#Crafting-the-evasion-attack" class="headerlink" title="Crafting the evasion attack"></a>Crafting the evasion attack</h3><p>求解的优化问题如下：</p>
+<script type="math/tex; mode=display">min_{\delta} J(x+\delta,x) \qquad s.t.|\delta|_{\infty} \le \epsilon</script><p>用PGD生成，Adam优化器。</p>
+<h3 id="Remix-adversarial-examples"><a href="#Remix-adversarial-examples" class="headerlink" title="Remix adversarial examples"></a>Remix adversarial examples</h3><p>上式生成的对抗样本噪声不自然，论文添加了下面的损失，使得生成的对抗样本的指纹和另一目标音频的指纹相似，即听起来更像是这个目标音频。</p>
+<script type="math/tex; mode=display">J_{remix}(x,y)=\sum_i(ReLU(c-(max_{|j\le w_2|}\phi(i+j;x)-max_{|j\le w_1|}\phi(i+j;x)))\cdot \psi(i;y))</script><p>$J_{remix}$和$J$的区别在于$w_1,w_2$的顺序不同，这使得让loss趋于最小值的方向相反，即使得生成的对抗样本的peak位置倾向于在$w_2$之内，即让对抗音频$x$的peak和目标音频$y$的peak贴近一点。</p>
+<p>生成remix版本样本的优化问题如下：</p>
+<script type="math/tex; mode=display">min_{\delta} J(x+\delta,x) + \lambda J_{remix}(x+\delta,y) \qquad s.t.|\delta|_{\infty} \le \epsilon</script><p>$\lambda$是控制remix强度的参数。</p>
+<h2 id="Evaluating-transfer-attacks-on-industrial-systems"><a href="#Evaluating-transfer-attacks-on-industrial-systems" class="headerlink" title="Evaluating transfer attacks on industrial systems"></a>Evaluating transfer attacks on industrial systems</h2><ul>
+<li>攻击了两个工业系统</li>
+<li>remix和无remix版本的对抗样本</li>
+<li>30s长度的音频</li>
+<li>样本：<a target="_blank" rel="noopener" href="https://www.cs.umd.edu/~tomg/projects/copyrightattack/">https://www.cs.umd.edu/~tomg/projects/copyrightattack/</a></li>
+</ul>
+<h3 id="White-box-attack-results"><a href="#White-box-attack-results" class="headerlink" title="White-box attack results"></a>White-box attack results</h3><p>使用hamming距离思想的loss函数，在人不可察觉的情况下攻击成功情况如下：</p>
+<p><img src="/2021/06/09/paper_notes/copyright_attack/whilebox_attack.png" alt="白盒攻击"></p>
+<h3 id="Transfer-attacks-on-AudioTag"><a href="#Transfer-attacks-on-AudioTag" class="headerlink" title="Transfer attacks on AudioTag"></a>Transfer attacks on AudioTag</h3><p><a target="_blank" rel="noopener" href="https://audiotag.info/">AudioTag</a>能够对上传的音频进行比对，然后找出这个音频是什么歌曲。</p>
+<ul>
+<li>成功攻击，扰动不易被人察觉</li>
+<li>可能架构与shazam类似</li>
+<li>数据集中90%的歌曲在表中扰动强度的情况下攻击成功</li>
+<li>4倍于扰动强度的随机噪声实现攻击</li>
+</ul>
+<p><img src="/2021/06/09/paper_notes/copyright_attack/black_attack_table.png" alt="黑盒攻击"></p>
+<h3 id="YouTube"><a href="#YouTube" class="headerlink" title="YouTube"></a>YouTube</h3><ul>
+<li>更难攻击，需要更大的扰动强度，扰动易察觉</li>
+<li>3倍于扰动强度的随机噪声能实现攻击</li>
+<li>数据集中67%歌曲攻击成功</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Cassini Huy
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/" title="论文笔记：Adversarial Attacks on Copyright Detection Systems">http://weichengan.com/2021/06/09/paper_notes/copyright_attack/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag"># 对抗攻击</a>
+              <a href="/tags/%E9%9F%B3%E9%A2%91%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag"># 音频对抗攻击</a>
+              <a href="/tags/copyright/" rel="tag"># copyright</a>
+              <a href="/tags/%E7%89%88%E6%9D%83%E4%BF%9D%E6%8A%A4/" rel="tag"># 版权保护</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/05/20/paper_notes/scaling_attack/" rel="prev" title="论文笔记：Seeing is Not Believing: Camouflage Attacks on Image Scaling Algorithms">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Seeing is Not Believing: Camouflage Attacks on Image Scaling Algorithms
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-makes-copyright-detection-systems-vulnerable-to-attacks"><span class="nav-number">2.</span> <span class="nav-text">What makes copyright detection systems vulnerable to attacks?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Types-of-copyright-detection-systems"><span class="nav-number">3.</span> <span class="nav-text">Types of copyright detection systems</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Case-study-evading-audio-fingerprinting"><span class="nav-number">4.</span> <span class="nav-text">Case study: evading audio fingerprinting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Audio-fingerprinting-models"><span class="nav-number">4.1.</span> <span class="nav-text">Audio fingerprinting models</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Interpreting-the-fingerprint-extractor-as-a-CNN"><span class="nav-number">4.2.</span> <span class="nav-text">Interpreting the fingerprint extractor as a CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Formulating-the-adversarial-loss-function"><span class="nav-number">4.3.</span> <span class="nav-text">Formulating the adversarial loss function</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Crafting-the-evasion-attack"><span class="nav-number">4.4.</span> <span class="nav-text">Crafting the evasion attack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Remix-adversarial-examples"><span class="nav-number">4.5.</span> <span class="nav-text">Remix adversarial examples</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluating-transfer-attacks-on-industrial-systems"><span class="nav-number">5.</span> <span class="nav-text">Evaluating transfer attacks on industrial systems</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#White-box-attack-results"><span class="nav-number">5.1.</span> <span class="nav-text">White-box attack results</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transfer-attacks-on-AudioTag"><span class="nav-number">5.2.</span> <span class="nav-text">Transfer attacks on AudioTag</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#YouTube"><span class="nav-number">5.3.</span> <span class="nav-text">YouTube</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Cassini Huy"
+      src="/images/crying-panda.gif">
+  <p class="site-author-name" itemprop="name">Cassini Huy</p>
+  <div class="site-description" itemprop="description">记录一些不成熟的想法</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">23</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cassini Huy</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+          load: ['[tex]/mhchem'],
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+          packages: {'[+]': ['mhchem']},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : true,
+      notify     : true,
+      appId      : 'sA5b5bSKVOumVxcKtX8NUqFk-gzGzoHsz',
+      appKey     : 'glFUguQG84y2GTeKhQR0RNAX',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : true,
+      lang       : '' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : true,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
