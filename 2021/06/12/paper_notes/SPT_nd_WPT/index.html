@@ -20,23 +20,25 @@
     var CONFIG = {"hostname":"weichengan.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null,"activeClass":"valine"},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="ReLU神经网络是分段线性函数(Piecewise Linear)。">
+  <meta name="description" content="论文Weighted-Sampling Audio Adversarial Example Attack, AAAI 2020阅读笔记。 论文主要提出了SPT(Sampling Perturbation Technology)和WPT(Weighted Perturbation Technology)两种方法，使得生成的音频对抗样本更低噪声、鲁棒、快速生成（分钟级）。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="ReLU神经网络：分段线性">
-<meta property="og:url" content="http://weichengan.com/2021/01/07/suibi/piecewise_linear/index.html">
+<meta property="og:title" content="论文笔记：Weighted-Sampling Audio Adversarial Example Attack">
+<meta property="og:url" content="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/index.html">
 <meta property="og:site_name" content="渭城岸的博客">
-<meta property="og:description" content="ReLU神经网络是分段线性函数(Piecewise Linear)。">
+<meta property="og:description" content="论文Weighted-Sampling Audio Adversarial Example Attack, AAAI 2020阅读笔记。 论文主要提出了SPT(Sampling Perturbation Technology)和WPT(Weighted Perturbation Technology)两种方法，使得生成的音频对抗样本更低噪声、鲁棒、快速生成（分钟级）。">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-01-07T01:35:59.000Z">
-<meta property="article:modified_time" content="2021-01-13T11:29:16.395Z">
+<meta property="og:image" content="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/CTC.png">
+<meta property="article:published_time" content="2021-06-12T03:12:06.000Z">
+<meta property="article:modified_time" content="2021-07-04T13:44:43.210Z">
 <meta property="article:author" content="Cassini Huy">
-<meta property="article:tag" content="神经网络">
-<meta property="article:tag" content="深度学习">
-<meta property="article:tag" content="可解释性">
-<meta property="article:tag" content="ReLU">
+<meta property="article:tag" content="对抗样本">
+<meta property="article:tag" content="对抗攻击">
+<meta property="article:tag" content="音频对抗攻击">
+<meta property="article:tag" content="CTC">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/CTC.png">
 
-<link rel="canonical" href="http://weichengan.com/2021/01/07/suibi/piecewise_linear/">
+<link rel="canonical" href="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/">
 
 
 <script id="page-configurations">
@@ -49,7 +51,7 @@
   };
 </script>
 
-  <title>ReLU神经网络：分段线性 | 渭城岸的博客</title>
+  <title>论文笔记：Weighted-Sampling Audio Adversarial Example Attack | 渭城岸的博客</title>
   
 
 
@@ -170,7 +172,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2021/01/07/suibi/piecewise_linear/">
+    <link itemprop="mainEntityOfPage" href="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/crying-panda.gif">
@@ -183,7 +185,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          ReLU神经网络：分段线性
+          论文笔记：Weighted-Sampling Audio Adversarial Example Attack
         </h1>
 
         <div class="post-meta">
@@ -193,7 +195,7 @@
               </span>
               <span class="post-meta-item-text">Posted on</span>
 
-              <time title="Created: 2021-01-07 09:35:59" itemprop="dateCreated datePublished" datetime="2021-01-07T09:35:59+08:00">2021-01-07</time>
+              <time title="Created: 2021-06-12 11:12:06" itemprop="dateCreated datePublished" datetime="2021-06-12T11:12:06+08:00">2021-06-12</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -201,12 +203,12 @@
               </span>
               <span class="post-meta-item-text">In</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E9%9A%8F%E7%AC%94/" itemprop="url" rel="index"><span itemprop="name">随笔</span></a>
+                  <a href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">论文笔记</span></a>
                 </span>
             </span>
 
           
-            <span id="/2021/01/07/suibi/piecewise_linear/" class="post-meta-item leancloud_visitors" data-flag-title="ReLU神经网络：分段线性" title="Views">
+            <span id="/2021/06/12/paper_notes/SPT_nd_WPT/" class="post-meta-item leancloud_visitors" data-flag-title="论文笔记：Weighted-Sampling Audio Adversarial Example Attack" title="Views">
               <span class="post-meta-item-icon">
                 <i class="fa fa-eye"></i>
               </span>
@@ -221,8 +223,8 @@
       </span>
       <span class="post-meta-item-text">Valine: </span>
     
-    <a title="valine" href="/2021/01/07/suibi/piecewise_linear/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/07/suibi/piecewise_linear/" itemprop="commentCount"></span>
+    <a title="valine" href="/2021/06/12/paper_notes/SPT_nd_WPT/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/06/12/paper_notes/SPT_nd_WPT/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -237,37 +239,76 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>ReLU神经网络是分段线性函数(Piecewise Linear)。</p>
+        <p>论文<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.10300">Weighted-Sampling Audio Adversarial Example Attack, AAAI 2020</a>阅读笔记。</p>
+<p>论文主要提出了SPT(Sampling Perturbation Technology)和WPT(Weighted Perturbation Technology)两种方法，使得生成的音频对抗样本更低噪声、鲁棒、快速生成（分钟级）。</p>
 <a id="more"></a>
-<h2 id="ReLU神经网络是分段线性函数"><a href="#ReLU神经网络是分段线性函数" class="headerlink" title="ReLU神经网络是分段线性函数"></a>ReLU神经网络是分段线性函数</h2><p>如果一个神经网络的非线性层（激活函数）都是一个分段线性函数（如ReLU）的话，那么这个网络在某个输入子集内，是一个线性函数。按复合函数的角度理解，每个复合的函数都是线性的，整个函数当然也是线性的。</p>
-<p>但是由于激活层分段线性，且网络的特征表示维度很高，所以神经网络这个函数还是很复杂的，可以“假装”其是一个非线性的函数来用。</p>
-<p>看似无法想象一个处处线性的函数具有如此强的拟合能力。其实其只是分段线性，就好像它不是一个球，但是它是一个n面体（n很大）一样。</p>
-<h2 id="一阶导为“常数”"><a href="#一阶导为“常数”" class="headerlink" title="一阶导为“常数”"></a>一阶导为“常数”</h2><p>ReLU激活的神经网络二阶导为零。</p>
-<p>设神经网络为映射：</p>
-<script type="math/tex; mode=display">f:\mathbb{R}_{n_0}\stackrel{f_1}{\longrightarrow}\mathbb{R}_{n_1}\stackrel{f_2}{\longrightarrow}\cdots\stackrel{f_{k-1} }{\longrightarrow}\mathbb{R}_{n_{k-1 } }\stackrel{f_k}{\longrightarrow}\mathbb{R}</script><p>设有一输入$x_0$和输出$y$，在网络中如下传播：</p>
-<script type="math/tex; mode=display">x_0\stackrel{f_1}{\longrightarrow}x_1\stackrel{f_2}{\longrightarrow}\cdots\stackrel{f_{k-1} }{\longrightarrow}x_{k-1}\stackrel{f_k}{\longrightarrow}y</script><p>则其对$x$的$i$元素一阶导：</p>
-<script type="math/tex; mode=display">\frac{\partial y}{\partial x^i_0}=\frac{\partial y}{\partial x_{k-1} }\cdot\frac{\partial x_{k-1} }{\partial x_{k-2} }\cdot\cdots\cdot\frac{\partial x_1}{\partial x^i_0}</script><p>其中每项都是常数，但是对于不同的输入$x_0$，其中激活层的导不同（虽然都是一堆0和1，ReLU的话）。</p>
-<h2 id="高阶导为零"><a href="#高阶导为零" class="headerlink" title="高阶导为零"></a>高阶导为零</h2><p>由上，继续求二阶导：</p>
-<script type="math/tex; mode=display">\begin{aligned}
-\frac{\partial^2 y}{ {\partial x^i_0}^2}&=\frac{\partial(\frac{\partial y}{\partial x_{k-1} })}{\partial x^i_0}\cdot(\frac{\partial x_{k-1} }{\partial x_{k-2} }\cdots\frac{\partial x_1}{\partial x^i_0})\\&+\cdots+\\&(\frac{\partial y}{\partial x_{k-1} }\cdots\frac{\partial x_{t+1} }{\partial x_{t} })\cdot\frac{\partial (\frac{\partial x_{t} }{\partial x_{t-1} })}{\partial x^i_0}\cdot(\frac{\partial x_{t-1} }{\partial x_{t-2} }\cdots\frac{\partial x_1}{\partial x^i_0})\\&+\cdots+\\&(\frac{\partial y}{\partial x_{k-1} }\cdots\frac{\partial x_1}{\partial x_0})\cdot\frac{\partial^2 x_1}{(\partial x^i_0)^2}
-\end{aligned}</script><p>其中，由于和线性部分的二阶导做了积，使其为零：</p>
-<script type="math/tex; mode=display">\frac{\partial (\frac{\partial x_{t} }{\partial x_{t-1} })}{\partial x^i_0}=\frac{\partial^2 x_t}{(\partial x_{t-1})^2}\cdot\frac{\partial x_{t-1} }{\partial x^i_0}=0</script><p>更高阶的导，于是也为零。</p>
-<h2 id="Grad-CAM-中的高阶导处理"><a href="#Grad-CAM-中的高阶导处理" class="headerlink" title="Grad-CAM++中的高阶导处理"></a>Grad-CAM++中的高阶导处理</h2><p>Grad-CAM++中涉及到二阶三阶导。</p>
-<p>由于ReLU神经网络高阶导为零，而Grad-CAM++假设了$S^c$函数是光滑函数，于是作者做了如下处理，定义了一个新的$Y^c$作为类别$c$的得分：</p>
-<script type="math/tex; mode=display">Y^c=\exp(S^c)</script><p>由于$\exp$是非线性的（处处），且其无穷阶可导，同时$Y^c$和$S^c$（在工程上）可以认为是“等价的”。</p>
-<p>如果看<a target="_blank" rel="noopener" href="https://github.com/frgfm/torch-cam/blob/master/torchcam/cams/gradcam.py">Grad-CAM++的代码</a>，可以发现，实现直接用了power函数代替了高阶求导操作：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_get_weights</span>(<span class="params">self, class_idx: <span class="built_in">int</span>, scores: Tensor</span>) -&gt; Tensor:</span>  <span class="comment"># type: ignore[override]</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;Computes the weight coefficients of the hooked activation maps&quot;&quot;&quot;</span></span><br><span class="line">    <span class="string">&quot;&quot;&quot;https://github.com/frgfm/torch-cam/blob/master/torchcam/cams/gradcam.py&quot;&quot;&quot;</span></span><br><span class="line">    self.hook_g: Tensor</span><br><span class="line">    <span class="comment"># Backpropagate</span></span><br><span class="line">    self._backprop(scores, class_idx)</span><br><span class="line">    <span class="comment"># Alpha coefficient for each pixel</span></span><br><span class="line">    grad_2 = self.hook_g.<span class="built_in">pow</span>(<span class="number">2</span>)</span><br><span class="line">    grad_3 = grad_2 * self.hook_g</span><br><span class="line">    <span class="comment"># Watch out for NaNs produced by underflow</span></span><br><span class="line">    denom = <span class="number">2</span> * grad_2 + (grad_3 * self.hook_a).<span class="built_in">sum</span>(dim=(<span class="number">2</span>, <span class="number">3</span>), keepdim=<span class="literal">True</span>)</span><br><span class="line">    nan_mask = grad_2 &gt; <span class="number">0</span></span><br><span class="line">    alpha = grad_2</span><br><span class="line">    alpha[nan_mask].div_(denom[nan_mask])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Apply pixel coefficient in each weight</span></span><br><span class="line">    <span class="keyword">return</span> alpha.squeeze_(<span class="number">0</span>).mul_(torch.relu(self.hook_g.squeeze(<span class="number">0</span>))).<span class="built_in">sum</span>(dim=(<span class="number">1</span>, <span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-<p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1710.11063.pdf">Grad-CAM++论文（最新版本）</a>指出的，这是因为（$A^k_{ij}$是第$k$层特征图）：</p>
-<p>一阶导：</p>
-<script type="math/tex; mode=display">\frac{\partial Y^c}{\partial A^k_{ij} }=\exp(S^c)\frac{\partial S^c}{\partial A^k_{ij} }</script><p>二阶导：</p>
-<script type="math/tex; mode=display">\begin{aligned}
-\frac{\partial^2 Y^c}{(\partial A^k_{ij})^2}&=\frac{\partial \exp(S^c)}{\partial A^k_{ij} }\frac{\partial S^c}{\partial A^k_{ij} }+\exp(S^c)\frac{\partial^2 S^c}{(\partial A^k_{ij})^2}\\&=\exp(S^c)(\frac{\partial S^c}{\partial A^k_{ij} })^2
-\end{aligned}</script><p>注意：</p>
-<script type="math/tex; mode=display">\frac{\partial^2 S^c}{(\partial A^k_{ij})^2}=0</script><p>同理：</p>
-<script type="math/tex; mode=display">\frac{\partial^3 Y^c}{(\partial A^k_{ij})^3}=\exp(S^c)(\frac{\partial S^c}{\partial A^k_{ij} })^3</script><p>$$$$</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
-<li>用生物上神经元的视角看神经网络，还是有一些道理的。</li>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>生成音频对抗样本的三大困难：</p>
+<ul>
+<li>计算资源多、计算时间长，花费时间以小时计；</li>
+<li>录音再重放会引入噪声，现有方法生成的对抗样本鲁棒性不强；</li>
+<li>适合作为音频对抗样本loss函数的度量方法，缺乏研究（图像一般用lp范数）</li>
 </ul>
+<p>作者的工作：</p>
+<ul>
+<li>使用SPT和WPT两种方法，控制扰动的样本点数量和更新权重，以提高鲁棒性和生成效率；</li>
+<li>研究了loss函数使用不同度量方法的效果；</li>
+<li>生成对抗样本只需4-5min（相较于以前的&gt;1h）；</li>
+</ul>
+<p>CTC介绍：<a target="_blank" rel="noopener" href="https://distill.pub/2017/ctc/">https://distill.pub/2017/ctc/</a><br>样本：<a target="_blank" rel="noopener" href="https://sites.google.com/view/audio-adversarial-examples/">https://sites.google.com/view/audio-adversarial-examples/</a></p>
+<h2 id="Related-Work"><a href="#Related-Work" class="headerlink" title="Related Work"></a>Related Work</h2><p>两种类型的攻击：</p>
+<ul>
+<li>speech-to-label：分类问题</li>
+<li>speech-to-text：语言转文字</li>
+</ul>
+<p>论文讨论第二种，更具现实意义。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://ieeexplore.ieee.org/abstract/document/8424625">Carlini and Wagner 2018</a>实现让ASR将一段话语识别为另一目标文字</li>
+<li><a target="_blank" rel="noopener" href="https://www.usenix.org/conference/usenixsecurity18/presentation/yuan-xuejing">CommanderSong</a>实现在音乐中嵌入扰动，让ASR识别为目标文字，且是物理攻击</li>
+</ul>
+<p>待优化方向：低噪声、鲁棒性、生成速度</p>
+<h2 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h2><p>威胁模型，攻击的目标ASR满足的条件：</p>
+<ul>
+<li>核心构件是RNN</li>
+<li>易被对抗样本攻击，攻击的结果作为下面测试的baseline</li>
+<li>开源，以作白盒攻击</li>
+</ul>
+<p>文章中的攻击：</p>
+<ul>
+<li>威胁模型是：Deepspeech</li>
+<li>只测试了白盒攻击</li>
+</ul>
+<p>设$f$是ASR模型，$\delta$是添加的扰动，$x$是输入的语言，$t$是恶意信息（即攻击目标是使得$f(x+\delta)=t$），则语言对抗攻击的目标函数可以写为：</p>
+<script type="math/tex; mode=display">l(x,\delta,t)=l_{model}(f(x+\delta),t)+c\cdot l_{metric}(x,x+\delta)</script><p>其中，$l_{model}$是ASR训练时候的损失函数，常用CTC loss；而$l_{metric}$在论文中探讨了下面几种：</p>
+<ul>
+<li>SNR(Signal-to-Noise Ratio)，即$SNR=10log_{10}\frac{P_x}{P_{\delta} }=10log_{10}\frac{ |x|_2^2 }{ |\delta|_2^2 }$</li>
+<li>WER(Word Error Rate)，即$WER=\frac{N_{substitution}+N_{deletion}+N_{insertion} }{N_{all} }\times 100\%$</li>
+<li>Success Rate，即$Success Rate=\frac{N_{adv} }{N_{total} }\times 100\%$，其中$N_{adv}$是攻击成功的样本</li>
+<li>Robustness Rate，即$Robustness Rate=\frac{N_{t(adv)} }{N_{total} }\times 100\%$，其中$t$指添加噪声的映射，即添加噪声后的success rate</li>
+</ul>
+<h2 id="Methodology"><a href="#Methodology" class="headerlink" title="Methodology"></a>Methodology</h2><h3 id="Sampling-perturbation-technology"><a href="#Sampling-perturbation-technology" class="headerlink" title="Sampling perturbation technology"></a>Sampling perturbation technology</h3><p>这里，以CTC loss为例：</p>
+<ul>
+<li>$x$是输入的语音（向量），$p$是$x$的语义信息（即phrase），$y$是概率分布（采用CTC的ASR的输出结果）</li>
+<li>$x_i$和$y^i$表示$x$的第$i$帧（向量值）及其概率分布（字符概率分布）</li>
+<li>$\pi$表示去除重复字符和空字符之前的tokens，有一个$\pi$，有其对应的text输出结果$p$，$\pi$的长度和$x$相同</li>
+<li>有一个概率分布$y$，对应于不同的$\pi$，有这个$\pi$的概率值，这个值就是$\prod_i y^i_{\pi^i}$，即每帧$\pi^i$对应的概率相乘</li>
+<li>有一个概率分布$y$，再有一个phrase记为$p$，则有一组$\pi\in\Pi(p,y)$</li>
+<li>对于一个概率分布$y$，语义信息为$p$的概率为所有对应的tokens概率相加，即$Pr(p|y)\sum_{\pi\in\Pi(p,y)}\prod^n_{i=0}y^i_{\pi^i}$</li>
+</ul>
+<p><img src="/2021/06/12/paper_notes/SPT_nd_WPT/CTC.png" alt="CTC"></p>
+<p>以前的工作是通过扰动$\pi$每个位置上的值，来使得目标phrase的概率最大，在这里，固定一部分，扰动其余部分。</p>
+<p>设被扰动后的tokens为$\pi’$，对应的概率分布为$y’$，则最大化下面这个式子：</p>
+<script type="math/tex; mode=display">\begin{aligned}
+    t
+    &=\argmax_p Pr(p|y)\\ 
+    &=\argmax_p \sum_{\pi \in \Pi(p|y)}\prod_{i=0}^n y^i_{\pi^i}\\
+    &=\argmax_p \sum_{\pi'\in\Pi(p|y')}\prod_{j=0}^{n-m} y^j_{\pi^j} \prod_k^m y_{\pi'^k}^{'k}
+\end{aligned}</script><p>（看起来是把$y$的前$n-m$个和$y’$的前$m$个直接乘起来？）</p>
+<h3 id="Weighted-perturbation-technology"><a href="#Weighted-perturbation-technology" class="headerlink" title="Weighted perturbation technology"></a>Weighted perturbation technology</h3><p>实验发现，在将语音原来的phrase调整到目标phrase的时候，超过一半的时候花在了两者Levenshtein距离在3-0的时候。</p>
+<p>使用ASL(Audio Sequence Location)模型去寻找目前结果的phrase和target phrase之间的区别，给出tokens中$k$个关键的key tokens（改变这些token使得输出为target phrase）$\chi^k$，然后在这个集合中的token，给予大于1的权重。</p>
+<script type="math/tex; mode=display">l(x,\delta,t)=l_{model}(f(x+\alpha\cdot t),t)+c\cdot l_{metric}(x,x+\delta)</script><script type="math/tex; mode=display">\alpha_i=\begin{cases}
+    \omega,if i\in \chi^k,\omega>1\\
+    1,else
+\end{cases}</script><p>同时在levenshtein距离从1到0的时候，降低learning rate。</p>
 
     </div>
 
@@ -283,7 +324,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="http://weichengan.com/2021/01/07/suibi/piecewise_linear/" title="ReLU神经网络：分段线性">http://weichengan.com/2021/01/07/suibi/piecewise_linear/</a>
+    <a href="http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/" title="论文笔记：Weighted-Sampling Audio Adversarial Example Attack">http://weichengan.com/2021/06/12/paper_notes/SPT_nd_WPT/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-ND</a> unless stating additionally.
@@ -294,10 +335,10 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" rel="tag"># 神经网络</a>
-              <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
-              <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" rel="tag"># 可解释性</a>
-              <a href="/tags/ReLU/" rel="tag"># ReLU</a>
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC/" rel="tag"># 对抗样本</a>
+              <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag"># 对抗攻击</a>
+              <a href="/tags/%E9%9F%B3%E9%A2%91%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag"># 音频对抗攻击</a>
+              <a href="/tags/CTC/" rel="tag"># CTC</a>
           </div>
 
         
@@ -306,13 +347,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/12/21/paper_notes/semantic_hierarchy/" rel="prev" title="论文笔记：Semantic Hierarchy Emerges in Deep Generative Representations for Scene Synthesis">
-      <i class="fa fa-chevron-left"></i> 论文笔记：Semantic Hierarchy Emerges in Deep Generative Representations for Scene Synthesis
+    <a href="/2021/06/09/paper_notes/copyright_attack/" rel="prev" title="论文笔记：Adversarial Attacks on Copyright Detection Systems">
+      <i class="fa fa-chevron-left"></i> 论文笔记：Adversarial Attacks on Copyright Detection Systems
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/01/13/suibi/relu_smoothgrad/" rel="next" title="一种ReLU一阶导的光滑处理方法">
-      一种ReLU一阶导的光滑处理方法 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -372,7 +410,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReLU%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%98%AF%E5%88%86%E6%AE%B5%E7%BA%BF%E6%80%A7%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">ReLU神经网络是分段线性函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E9%98%B6%E5%AF%BC%E4%B8%BA%E2%80%9C%E5%B8%B8%E6%95%B0%E2%80%9D"><span class="nav-number">2.</span> <span class="nav-text">一阶导为“常数”</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E9%98%B6%E5%AF%BC%E4%B8%BA%E9%9B%B6"><span class="nav-number">3.</span> <span class="nav-text">高阶导为零</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Grad-CAM-%E4%B8%AD%E7%9A%84%E9%AB%98%E9%98%B6%E5%AF%BC%E5%A4%84%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">Grad-CAM++中的高阶导处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Related-Work"><span class="nav-number">2.</span> <span class="nav-text">Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Background"><span class="nav-number">3.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Methodology"><span class="nav-number">4.</span> <span class="nav-text">Methodology</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Sampling-perturbation-technology"><span class="nav-number">4.1.</span> <span class="nav-text">Sampling perturbation technology</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Weighted-perturbation-technology"><span class="nav-number">4.2.</span> <span class="nav-text">Weighted perturbation technology</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
