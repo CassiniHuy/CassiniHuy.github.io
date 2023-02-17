@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>论文笔记：Adversarial Attacks on Copyright Detection Systems, ICML 2020 | 渭城岸的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="苟日新，日日新，又日新。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Adversarial Attacks on Copyright Detection Systems, ICML 2020">
+<meta property="og:url" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/index.html">
+<meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:description" content="苟日新，日日新，又日新。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/architecture.png">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/whilebox_attack.png">
+<meta property="og:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/black_attack_table.png">
+<meta property="article:published_time" content="2021-06-09T14:32:29.000Z">
+<meta property="article:modified_time" content="2023-02-17T06:55:48.110Z">
+<meta property="article:author" content="cassiniwei@outlook.com">
+<meta property="article:tag" content="对抗攻击">
+<meta property="article:tag" content="音频对抗攻击">
+<meta property="article:tag" content="copyright">
+<meta property="article:tag" content="版权保护">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://weichengan.com/2021/06/09/paper_notes/copyright_attack/architecture.png">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">渭城岸的博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-github-link" class="nav-icon" href="https://github.com/CassiniHuy" title="Github" target="_blank"></a>
+        
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://weichengan.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-paper_notes/copyright_attack" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    
+<a href="/2021/06/09/paper_notes/copyright_attack/" class="article-date">
+  <time class="dt-published" datetime="2021-06-09T14:32:29.000Z" itemprop="datePublished">2021-06-09</time>
+</a>
+
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      论文笔记：Adversarial Attacks on Copyright Detection Systems, ICML 2020
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+		
+		<div id="toc" class="toc-article">
+			<h2 class="toc-title"><span>Contents</span></h2>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-makes-copyright-detection-systems-vulnerable-to-attacks"><span class="toc-number">2.</span> <span class="toc-text">What makes copyright detection systems vulnerable to attacks?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Types-of-copyright-detection-systems"><span class="toc-number">3.</span> <span class="toc-text">Types of copyright detection systems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Case-study-evading-audio-fingerprinting"><span class="toc-number">4.</span> <span class="toc-text">Case study: evading audio fingerprinting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Audio-fingerprinting-models"><span class="toc-number">4.1.</span> <span class="toc-text">Audio fingerprinting models</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interpreting-the-fingerprint-extractor-as-a-CNN"><span class="toc-number">4.2.</span> <span class="toc-text">Interpreting the fingerprint extractor as a CNN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Formulating-the-adversarial-loss-function"><span class="toc-number">4.3.</span> <span class="toc-text">Formulating the adversarial loss function</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Crafting-the-evasion-attack"><span class="toc-number">4.4.</span> <span class="toc-text">Crafting the evasion attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remix-adversarial-examples"><span class="toc-number">4.5.</span> <span class="toc-text">Remix adversarial examples</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Evaluating-transfer-attacks-on-industrial-systems"><span class="toc-number">5.</span> <span class="toc-text">Evaluating transfer attacks on industrial systems</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#White-box-attack-results"><span class="toc-number">5.1.</span> <span class="toc-text">White-box attack results</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transfer-attacks-on-AudioTag"><span class="toc-number">5.2.</span> <span class="toc-text">Transfer attacks on AudioTag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YouTube"><span class="toc-number">5.3.</span> <span class="toc-text">YouTube</span></a></li></ol></li></ol>
+		
+		</div>
+		
+        <p>论文<a target="_blank" rel="noopener" href="http://proceedings.mlr.press/v119/saadatpanah20a.html">Adversarial Attacks on Copyright Detection Systems, ICML 2020</a>阅读笔记。</p>
+<p>使用音频对抗攻击的思路和方法，论文攻击了版权检测（Copyright Detection）系统。作者首先使用神经网络去还原了一个公开的音频指纹（Audio Fingerprint Models）提取算法，然后使用常规的对抗攻击算法攻击了这个模型（白盒），然后在放大（scale up）了一些扰动之后，黑盒攻击了谷歌的AudioTag版权检测系统和YouTube的Content ID系统。</p>
+<span id="more"></span>
+<p>本人没有复现和做实验，属于纸上谈兵。</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><p>这里省略对抗样本的基本介绍。</p>
+<p>下面是有关copyright detection的一些背景信息：</p>
+<ul>
+<li>版权检测一般的方法是通过提取音频或视频的特征（指纹，fingerprint），然后与已有的特征库做对比，判断是否侵权。</li>
+<li>YouTube的Content ID系统，将对每个视频做标记（flag），方便管理。</li>
+<li>Google Jigsaw会检测并移除宣扬（promote）恐怖主义和危害（jeopardize）国家安全的视频。</li>
+<li>欧盟要求所有能够使得用户上传文字、音频和视频的服务都要有版权过滤（copyright filter）。</li>
+</ul>
+<p>版权检测系统通常是专利（proprietary），无法攻击全部的系统。论文的目标在于</p>
+<ul>
+<li>证明版权检测系统的脆弱性</li>
+<li>确定（establish）现有文献中的攻击能够潜在地利用（exploit）音视频版权检测系统。</li>
+</ul>
+<p>论文的工作：</p>
+<ul>
+<li>攻击音频版权检测系统；</li>
+<li>使用tensorflow复现了“shazam”算法（音频指纹提取），使得算法成为一个可微的神经网络；</li>
+<li>使用基于梯度的方法，白盒和黑盒攻击；</li>
+<li>黑盒攻击：足够扰动的情况下，攻击了现有的工业系统AudioTag和YouTube Content ID系统</li>
+</ul>
+<p>主页和样例：<a target="_blank" rel="noopener" href="https://www.cs.umd.edu/~tomg/projects/copyrightattack/">https://www.cs.umd.edu/~tomg/projects/copyrightattack/</a></p>
+<p>可以听出，黑盒攻击AudioTag和Content ID的音乐噪音还是明显的。</p>
+<h2 id="What-makes-copyright-detection-systems-vulnerable-to-attacks"><a href="#What-makes-copyright-detection-systems-vulnerable-to-attacks" class="headerlink" title="What makes copyright detection systems vulnerable to attacks?"></a>What makes copyright detection systems vulnerable to attacks?</h2><p>这里省略一般的对抗样本工作的介绍。</p>
+<p>版权检测系统的攻击和一般的（图片、音频）对抗攻击的区别：</p>
+<ul>
+<li>数字域的攻击：版权检测面对的数字媒体一般直接上传到服务系统（如YouTube），而不是在物理世界采样得到（如针对stop sign的攻击，需要对干扰因素鲁棒（nuisance variables）），这使得版权检测的攻击更为简单（相比较物理攻击）；</li>
+<li>开集问题：闭集问题（closed-set）的每个输入有个确定的类别与之对应，版权检测是开集（open-set）问题，大多数音频不侵权，需要被标记，系统往往采取保守的策略；</li>
+<li>高相似度下的判别：版权检测系统在具有高相似度（共享许多特征）的音频中分辨出音频是否侵权（类似于ImageNet在高相似度的图片中分类），对于对抗攻击（只需要改动更少的特征）而言，较为有利。</li>
+</ul>
+<p>上面三点，使得版权检测系统易于攻击。</p>
+<h2 id="Types-of-copyright-detection-systems"><a href="#Types-of-copyright-detection-systems" class="headerlink" title="Types of copyright detection systems"></a>Types of copyright detection systems</h2><p>版权检测系统通过提取图片、音频、视频的特征（指纹），然后与已有的特征库作比较，如果达到一定的相似度，就视为侵权（两样本相同）。提取特征的方法有两种：</p>
+<ul>
+<li>使用一个神经网络提取特征</li>
+<li>使用手动构造（hand-crafted）的特征，也可以重新解释（reinterpret）成一个神经网络</li>
+</ul>
+<p>论文断言，手动构造的音频特征并不安全。</p>
+<h2 id="Case-study-evading-audio-fingerprinting"><a href="#Case-study-evading-audio-fingerprinting" class="headerlink" title="Case study: evading audio fingerprinting"></a>Case study: evading audio fingerprinting</h2><p>下面使用神经网络还原（resemble）了一个常用的公开的音频指纹提取算法，然后进行白盒攻击，并迁移到了黑盒上（AudioTag，YouTube Content ID）。</p>
+<h3 id="Audio-fingerprinting-models"><a href="#Audio-fingerprinting-models" class="headerlink" title="Audio fingerprinting models"></a>Audio fingerprinting models</h3><p>攻击的算法是<a target="_blank" rel="noopener" href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.217.8882&amp;rep=rep1&amp;type=pdf">shazam算法</a>，广泛用于音乐识别。</p>
+<p>良好的音频指纹具有的三个性质：</p>
+<ol>
+<li>时间局部性（Temporally Localized）：使用音频的一小段区间计算得到</li>
+<li>平移不变性（Translation Invariant）：音频样本起始时间不同，但是指纹相同</li>
+<li>鲁棒性：对一定的噪声鲁棒</li>
+</ol>
+<p>shazam使用时频图峰（spectrogram peaks）的位置（针对每一时间帧而言）作为音频的指纹，对噪声鲁棒，并近似线性超稳定型（approximate linear superposability）。</p>
+<h3 id="Interpreting-the-fingerprint-extractor-as-a-CNN"><a href="#Interpreting-the-fingerprint-extractor-as-a-CNN" class="headerlink" title="Interpreting the fingerprint extractor as a CNN"></a>Interpreting the fingerprint extractor as a CNN</h3><p><img src="/2021/06/09/paper_notes/copyright_attack/architecture.png" alt="架构图"></p>
+<p>可以将上述提取特征的算法看作一组变换（线性映射），参考上面所说的前俩性质，使用CNN来还原shazam算法，有下面几层：</p>
+<p>第一层，hann窗。和标准化（hann系数加起来等于1）的hann函数做卷积，卷积核如下：</p>
+<script type="math/tex; mode=display">f_1(n)=\frac{sin^2(\frac{\pi n}{N})}{\sum^N_{i=0}sin^2(\frac{\pi i}{N})}</script><ul>
+<li>减轻不连续和不好的频谱性质（如旁瓣现象）对生成对抗样本的影响</li>
+<li>对黑盒攻击施加更加有效的扰动</li>
+</ul>
+<p>第二层，短时傅里叶变化，计算时频图。和N个Fourier核做卷积，代表不同的频率：</p>
+<script type="math/tex; mode=display">f_2(k,n)=e^{-i2\pi kn / N},k\in\{0,1,\cdots,N-1\}</script><ul>
+<li>然后取其幅度谱即可（即模长）。</li>
+<li>设输入信号为$x$，定义此时得到的特征为$\phi(x)$</li>
+</ul>
+<p>然后使用maxpooling来提取局部最大值（沿着频率方向，即对频率特征进行一维池化），然后使用最大值的位置作为指纹，即如下的等式：</p>
+<script type="math/tex; mode=display">\phi(x)=maxpool(\phi(x))</script><blockquote>
+<p>The resulting binary map of local maxima locations is the fingerprint of the signal and can be used to search for a signal against a database of previously processed signals. </p>
+</blockquote>
+<p>记这个二进制指纹为$\psi(x)$。</p>
+<h3 id="Formulating-the-adversarial-loss-function"><a href="#Formulating-the-adversarial-loss-function" class="headerlink" title="Formulating the adversarial loss function"></a>Formulating the adversarial loss function</h3><p>对抗样本的损失函数怎么设计？如何衡量两个指纹的相似性？</p>
+<p>论文使用Lp范数，具体而言使用$l_{\infty}$来限制扰动的强度，使得：</p>
+<script type="math/tex; mode=display">|\delta|_{\infty}\le \epsilon</script><p>参考hamming距离（二进制位数不同的个数）来衡量两个二进制指纹的相似性，使用下面的式子作为两个指纹（adversarial&amp;original，设为$x$和$y$）的相似度损失：</p>
+<script type="math/tex; mode=display">J(x,y)=|\phi(x) \cdot \psi(x) \cdot \psi(y)|</script><ul>
+<li><p>即只有$x,y$共同的最大值位置的值相加，只利用这些地方的神经元。</p>
+</li>
+<li><p>对于白盒攻击，目前设计的损失是足够的，但是对于黑盒攻击，不够鲁棒。针对某一时间帧，只需要对抗样本的频峰（peaks）向高/低频移动一个单位就可以使得该频峰对loss的贡献为零。</p>
+</li>
+</ul>
+<p>因此，论文采取了下面的loss函数，来使得对抗音频的peaks离真（original）样本的peaks更远。</p>
+<script type="math/tex; mode=display">J(x,y)=\sum_i(ReLU(c-(max_{|j\le w_1|}\phi(i+j;x)-max_{|j\le w_2|}\phi(i+j;x)))\cdot \psi(i;y))</script><p>记相减项为$\Delta$。<br>$\Delta = max<em>{|j\le w_1|}\phi(i+j;x)-max</em>{|j\le w_2|}\phi(i+j;x)\ge 0$</p>
+<ul>
+<li>式子是针对某一时间帧而言的。</li>
+<li>（可以看作）这里有两个最大池化层，池化宽度分别为$w_1,w_2$且$w_1\ge w_2$，这使得$\Delta$值非负，其中$c$为常数，控制扰动的幅度。</li>
+<li>在上式中，如果$i$位置对抗样本的peak存在于$w_2$宽度内，则$\Delta=0$；否则，存在于$w_2$之外，$w_1$之内，则$\Delta&gt;0$。这使得最大值倾向于出现在离原样本peak较远的位置，更为鲁棒。</li>
+</ul>
+<p>论文使用了下面的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Smooth_maximum">smoothed max function</a>来代替实际的max函数：</p>
+<script type="math/tex; mode=display">S_{\alpha}=\frac{\sum^n_{i=1}x_i e^{\alpha x_i}}{\sum^n_{i=1} e^{\alpha x_i}}</script><ul>
+<li>$\alpha\to\infty$，该函数逼近真实max函数。</li>
+<li>论文说是为了使max可微？但是maxpooling是可以进行反向传播的。这里应该是为了使得生成的对抗样本更为鲁棒，因为smoothed版本能够考虑到除了最大值神经元之外的神经元（重要性依值大小而定），更具有抗干扰的能力（加了噪声之后？）。</li>
+<li>论文中的$\alpha$一直取1.</li>
+</ul>
+<h3 id="Crafting-the-evasion-attack"><a href="#Crafting-the-evasion-attack" class="headerlink" title="Crafting the evasion attack"></a>Crafting the evasion attack</h3><p>求解的优化问题如下：</p>
+<script type="math/tex; mode=display">min_{\delta} J(x+\delta,x) \qquad s.t.|\delta|_{\infty} \le \epsilon</script><p>用PGD生成，Adam优化器。</p>
+<h3 id="Remix-adversarial-examples"><a href="#Remix-adversarial-examples" class="headerlink" title="Remix adversarial examples"></a>Remix adversarial examples</h3><p>上式生成的对抗样本噪声不自然，论文添加了下面的损失，使得生成的对抗样本的指纹和另一目标音频的指纹相似，即听起来更像是这个目标音频。</p>
+<script type="math/tex; mode=display">J_{remix}(x,y)=\sum_i(ReLU(c-(max_{|j\le w_2|}\phi(i+j;x)-max_{|j\le w_1|}\phi(i+j;x)))\cdot \psi(i;y))</script><p>$J_{remix}$和$J$的区别在于$w_1,w_2$的顺序不同，这使得让loss趋于最小值的方向相反，即使得生成的对抗样本的peak位置倾向于在$w_2$之内，即让对抗音频$x$的peak和目标音频$y$的peak贴近一点。</p>
+<p>生成remix版本样本的优化问题如下：</p>
+<script type="math/tex; mode=display">min_{\delta} J(x+\delta,x) + \lambda J_{remix}(x+\delta,y) \qquad s.t.|\delta|_{\infty} \le \epsilon</script><p>$\lambda$是控制remix强度的参数。</p>
+<h2 id="Evaluating-transfer-attacks-on-industrial-systems"><a href="#Evaluating-transfer-attacks-on-industrial-systems" class="headerlink" title="Evaluating transfer attacks on industrial systems"></a>Evaluating transfer attacks on industrial systems</h2><ul>
+<li>攻击了两个工业系统</li>
+<li>remix和无remix版本的对抗样本</li>
+<li>30s长度的音频</li>
+<li>样本：<a target="_blank" rel="noopener" href="https://www.cs.umd.edu/~tomg/projects/copyrightattack/">https://www.cs.umd.edu/~tomg/projects/copyrightattack/</a></li>
+</ul>
+<h3 id="White-box-attack-results"><a href="#White-box-attack-results" class="headerlink" title="White-box attack results"></a>White-box attack results</h3><p>使用hamming距离思想的loss函数，在人不可察觉的情况下攻击成功情况如下：</p>
+<p><img src="/2021/06/09/paper_notes/copyright_attack/whilebox_attack.png" alt="白盒攻击"></p>
+<h3 id="Transfer-attacks-on-AudioTag"><a href="#Transfer-attacks-on-AudioTag" class="headerlink" title="Transfer attacks on AudioTag"></a>Transfer attacks on AudioTag</h3><p><a target="_blank" rel="noopener" href="https://audiotag.info/">AudioTag</a>能够对上传的音频进行比对，然后找出这个音频是什么歌曲。</p>
+<ul>
+<li>成功攻击，扰动不易被人察觉</li>
+<li>可能架构与shazam类似</li>
+<li>数据集中90%的歌曲在表中扰动强度的情况下攻击成功</li>
+<li>4倍于扰动强度的随机噪声实现攻击</li>
+</ul>
+<p><img src="/2021/06/09/paper_notes/copyright_attack/black_attack_table.png" alt="黑盒攻击"></p>
+<h3 id="YouTube"><a href="#YouTube" class="headerlink" title="YouTube"></a>YouTube</h3><ul>
+<li>更难攻击，需要更大的扰动强度，扰动易察觉</li>
+<li>3倍于扰动强度的随机噪声能实现攻击</li>
+<li>数据集中67%歌曲攻击成功</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+	  
+	  <!-- 百度分享 Start -->
+	  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+	  <!-- 百度分享 End -->
+    
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/copyright/" rel="tag">copyright</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag">对抗攻击</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%89%88%E6%9D%83%E4%BF%9D%E6%8A%A4/" rel="tag">版权保护</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9F%B3%E9%A2%91%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" rel="tag">音频对抗攻击</a></li></ul>
+
+	  
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/06/12/paper_notes/SPT_nd_WPT/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          论文笔记：Weighted-Sampling Audio Adversarial Example Attack, AAAI 2020
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/05/20/paper_notes/scaling_attack/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">论文笔记：Seeing is Not Believing: Camouflage Attacks on Image Scaling Algorithms</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+  <section id="comments" class="vcomment">
+
+  </section>
+</section>
+        
+          
+  <div id="toc" class="toc-aside">
+  <h2 class="toc-title">Contents</h2>
+    
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-number">1.</span> <span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-makes-copyright-detection-systems-vulnerable-to-attacks"><span class="toc-number">2.</span> <span class="toc-text">What makes copyright detection systems vulnerable to attacks?</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Types-of-copyright-detection-systems"><span class="toc-number">3.</span> <span class="toc-text">Types of copyright detection systems</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Case-study-evading-audio-fingerprinting"><span class="toc-number">4.</span> <span class="toc-text">Case study: evading audio fingerprinting</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Audio-fingerprinting-models"><span class="toc-number">4.1.</span> <span class="toc-text">Audio fingerprinting models</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Interpreting-the-fingerprint-extractor-as-a-CNN"><span class="toc-number">4.2.</span> <span class="toc-text">Interpreting the fingerprint extractor as a CNN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Formulating-the-adversarial-loss-function"><span class="toc-number">4.3.</span> <span class="toc-text">Formulating the adversarial loss function</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Crafting-the-evasion-attack"><span class="toc-number">4.4.</span> <span class="toc-text">Crafting the evasion attack</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Remix-adversarial-examples"><span class="toc-number">4.5.</span> <span class="toc-text">Remix adversarial examples</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Evaluating-transfer-attacks-on-industrial-systems"><span class="toc-number">5.</span> <span class="toc-text">Evaluating transfer attacks on industrial systems</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#White-box-attack-results"><span class="toc-number">5.1.</span> <span class="toc-text">White-box attack results</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Transfer-attacks-on-AudioTag"><span class="toc-number">5.2.</span> <span class="toc-text">Transfer attacks on AudioTag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YouTube"><span class="toc-number">5.3.</span> <span class="toc-text">YouTube</span></a></li></ol></li></ol>
+    
+  </div>
+
+<aside id="sidebar">
+
+  
+    
+<div class="widget-wrap">
+  <h3 class="widget-title">ABOUT ME</h3>
+  <ul class="widget about-me">
+    
+    <li><img class="author" title="About me" src="/images/coffee_onetwo.jpg" /></li>
+    
+    
+    <li>Hi, LuYongjian! LYJNB!</li>
+    
+  </ul>
+</div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTC/" style="font-size: 13px; color: #7dc3de">CTC</a> <a href="/tags/GAN/" style="font-size: 14.17px; color: #6dc1b9">GAN</a> <a href="/tags/PyTorch/" style="font-size: 13px; color: #7dc3de">PyTorch</a> <a href="/tags/RTX-4090/" style="font-size: 13px; color: #7dc3de">RTX 4090</a> <a href="/tags/ReLU/" style="font-size: 14.17px; color: #6dc1b9">ReLU</a> <a href="/tags/Text-to-Image/" style="font-size: 13px; color: #7dc3de">Text-to-Image</a> <a href="/tags/Windows%E7%BC%96%E7%A8%8B/" style="font-size: 13px; color: #7dc3de">Windows编程</a> <a href="/tags/copyright/" style="font-size: 13px; color: #7dc3de">copyright</a> <a href="/tags/nvidia/" style="font-size: 13px; color: #7dc3de">nvidia</a> <a href="/tags/tensorflow-1-15/" style="font-size: 13px; color: #7dc3de">tensorflow 1.15</a> <a href="/tags/viterbi%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">viterbi算法</a> <a href="/tags/%E4%B8%AD%E5%BF%83%E5%8C%96%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">中心化差分隐私</a> <a href="/tags/%E4%BA%8C%E5%80%BC%E5%8C%96/" style="font-size: 13px; color: #7dc3de">二值化</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/" style="font-size: 13px; color: #7dc3de">代码注入</a> <a href="/tags/%E4%BD%8E%E9%80%9A%E6%BB%A4%E6%B3%A2/" style="font-size: 13px; color: #7dc3de">低通滤波</a> <a href="/tags/%E4%BD%8E%E9%80%9A%E6%BB%A4%E6%B3%A2%E5%99%A8/" style="font-size: 13px; color: #7dc3de">低通滤波器</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/" style="font-size: 13px; color: #7dc3de">内存泄露</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">分布式学习</a> <a href="/tags/%E5%89%8D%E5%90%91%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">前向算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">协作学习</a> <a href="/tags/%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC/" style="font-size: 13px; color: #7dc3de">双线性插值</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 16.5px; color: #4dbc6f">可视化</a> <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" style="font-size: 17.67px; color: #3db94a">可解释性</a> <a href="/tags/%E5%90%8E%E9%97%A8%E6%94%BB%E5%87%BB/" style="font-size: 13px; color: #7dc3de">后门攻击</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" style="font-size: 13px; color: #7dc3de">图像分割</a> <a href="/tags/%E5%9B%BE%E7%89%87%E8%AF%86%E5%88%AB/" style="font-size: 13px; color: #7dc3de">图片识别</a> <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" style="font-size: 16.5px; color: #4dbc6f">对抗攻击</a> <a href="/tags/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC/" style="font-size: 14.17px; color: #6dc1b9">对抗样本</a> <a href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">对比学习</a> <a href="/tags/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">差分隐私</a> <a href="/tags/%E6%94%BF%E6%B2%BB%E7%BB%8F%E6%B5%8E%E5%AD%A6%E6%A6%82%E8%AE%BA/" style="font-size: 13px; color: #7dc3de">政治经济学概论</a> <a href="/tags/%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" style="font-size: 14.17px; color: #6dc1b9">数字信号处理</a> <a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" style="font-size: 14.17px; color: #6dc1b9">数字图像处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%8A%95%E6%AF%92/" style="font-size: 13px; color: #7dc3de">数据投毒</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">本地化差分隐私</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 14.17px; color: #6dc1b9">机器学习</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%B2%81%E6%A3%92%E6%80%A7/" style="font-size: 13px; color: #7dc3de">模型鲁棒性</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px; color: #1db400">深度学习</a> <a href="/tags/%E7%89%88%E6%9D%83%E4%BF%9D%E6%8A%A4/" style="font-size: 13px; color: #7dc3de">版权保护</a> <a href="/tags/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/" style="font-size: 13px; color: #7dc3de">生成对抗网络</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px; color: #7dc3de">生成模型</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 18.83px; color: #2db725">神经网络</a> <a href="/tags/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">联邦学习</a> <a href="/tags/%E8%A7%86%E9%A2%91/" style="font-size: 13px; color: #7dc3de">视频</a> <a href="/tags/%E8%B7%A8%E6%A8%A1%E6%80%81/" style="font-size: 13px; color: #7dc3de">跨模态</a> <a href="/tags/%E8%BF%87%E6%8B%9F%E5%90%88/" style="font-size: 13px; color: #7dc3de">过拟合</a> <a href="/tags/%E9%87%8D%E9%87%87%E6%A0%B7/" style="font-size: 13px; color: #7dc3de">重采样</a> <a href="/tags/%E9%87%8D%E9%87%87%E6%A0%B7%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">重采样算法</a> <a href="/tags/%E9%98%88%E5%80%BC%E5%A4%84%E7%90%86/" style="font-size: 13px; color: #7dc3de">阈值处理</a> <a href="/tags/%E9%99%8D%E9%87%87%E6%A0%B7/" style="font-size: 13px; color: #7dc3de">降采样</a> <a href="/tags/%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4/" style="font-size: 15.33px; color: #5dbe94">隐私保护</a> <a href="/tags/%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB/" style="font-size: 13px; color: #7dc3de">隐马尔可夫</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" style="font-size: 14.17px; color: #6dc1b9">音频对抗攻击</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 13px; color: #7dc3de">音频预处理</a> <a href="/tags/%E9%A2%91%E8%B0%B1%E6%B7%B7%E5%8F%A0/" style="font-size: 13px; color: #7dc3de">频谱混叠</a> <a href="/tags/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB/" style="font-size: 13px; color: #7dc3de">马尔可夫</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/17/suibi/image_lowpass_filtering/">Image Low-pass Filtering Algorithms Ideal/Butterworth/Gaussian (PyTorch Implementation) 图像低通滤波算法PyTorch实现</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/09/suibi/nv_tf1155_bug/">nvidia-tensorflow 1.15.5的signal模块的一个内存泄漏bug</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/18/paper_notes/cvpr20_video_backdoor/">CVPR2020 Clean-Label Backdoor Attacks on Video Recognition Models</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/31/suibi/code_inject/">代码注入：调用CreateProcess使explorer启动目标进程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/16/paper_notes/xmcgan/">论文笔记：Cross-Modal Contrastive Learning for Text-to-Image Generation, CVPR 2021</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+<div class="widget-wrap">
+  <h3 class="widget-title">Links</h3>
+  <ul class="widget">
+    
+    <li><a href="https://qgrain.github.io/" target="_BLANK">Zhiyu&#39;s Blog</a></li>
+    
+    <li><a href="https://github.com/CassiniHuy" target="_BLANK">CassiniHuy&#39;s Github</a></li>
+    
+    <li><a href="https://www.marxists.org/chinese/marx/index.htm" target="_BLANK">中文马克思主义文库</a></li>
+    
+    <li><a href="https://www.zdic.net/" target="_BLANK">汉典</a></li>
+    
+  </ul>
+</div>
+
+
+  
+
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 cassiniwei@outlook.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and Theme by <a href="https://github.com/howiefh/hexo-theme-landscape-f" target="_blank" title="Landscape-F">Landscape-F</a>
+    
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<!-- 百度分享 start -->
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","douban","bdysc","sqq","qq","hi","baidu","huaban","youdao","sdo","mail","xg","diandian","fx","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<!-- 百度分享 end -->
+
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	
+<script src="/js/gotop.js"></script>
+
+
+
+	<a class="icon-toc-toggle" href="javascript:void(0)" title="文章目录"></a>
+	
+<script src="/js/toc_aside_toggle.js"></script>
+
+
+</div>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+<script>
+    var GUEST_INFO = ['nick','mail','link'];
+    var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+        return GUEST_INFO.indexOf(item) > -1
+    });
+    var notify = 'true' == true;
+    var verify = 'true' == true;
+    new Valine({
+        el: '.vcomment',
+        notify: notify,
+        verify: verify,
+        appId: "sA5b5bSKVOumVxcKtX8NUqFk-gzGzoHsz",
+        appKey: "glFUguQG84y2GTeKhQR0RNAX",
+        placeholder: "Feel free to comment but new comment notification is disabled. Please contact me by cassiniwei@outlook.com if needed.",
+        pageSize:'10',
+        avatar:'mm',
+        lang:''
+    });
+</script>
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>

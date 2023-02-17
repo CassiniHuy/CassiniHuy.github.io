@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>论文笔记：Cross-Modal Contrastive Learning for Text-to-Image Generation, CVPR 2021 | 渭城岸的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="苟日新，日日新，又日新。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记：Cross-Modal Contrastive Learning for Text-to-Image Generation, CVPR 2021">
+<meta property="og:url" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/index.html">
+<meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:description" content="苟日新，日日新，又日新。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled.png">
+<meta property="og:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled%201.png">
+<meta property="og:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled%202.png">
+<meta property="og:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled%203.png">
+<meta property="og:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled%204.png">
+<meta property="article:published_time" content="2021-12-15T16:59:22.000Z">
+<meta property="article:modified_time" content="2023-02-17T06:55:48.130Z">
+<meta property="article:author" content="cassiniwei@outlook.com">
+<meta property="article:tag" content="GAN">
+<meta property="article:tag" content="对比学习">
+<meta property="article:tag" content="Text-to-Image">
+<meta property="article:tag" content="跨模态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://weichengan.com/2021/12/16/paper_notes/xmcgan/Untitled.png">
+  
+  
+    <link rel="icon" href="/images/favicon.ico">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+
+  
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">渭城岸的博客</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-github-link" class="nav-icon" href="https://github.com/CassiniHuy" title="Github" target="_blank"></a>
+        
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://weichengan.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-paper_notes/xmcgan" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    
+<a href="/2021/12/16/paper_notes/xmcgan/" class="article-date">
+  <time class="dt-published" datetime="2021-12-15T16:59:22.000Z" itemprop="datePublished">2021-12-16</time>
+</a>
+
+
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      论文笔记：Cross-Modal Contrastive Learning for Text-to-Image Generation, CVPR 2021
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+		
+		<div id="toc" class="toc-article">
+			<h2 class="toc-title"><span>Contents</span></h2>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Motivation%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E6%9D%A5%E5%81%9AText-to-Image"><span class="toc-number">1.</span> <span class="toc-text">Motivation：使用对比学习来做Text-to-Image</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Method%EF%BC%9A%E4%B8%89%E4%B8%AA%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1%E5%92%8CGAN"><span class="toc-number">2.</span> <span class="toc-text">Method：三个对比损失和GAN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Image-text-contrastive-loss"><span class="toc-number">2.1.</span> <span class="toc-text">Image-text contrastive loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-loss-between-fake-and-real-images-with-shared-description"><span class="toc-number">2.2.</span> <span class="toc-text">Contrastive loss between fake and real images with shared description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-loss-between-image-regions-and-words"><span class="toc-number">2.3.</span> <span class="toc-text">Contrastive loss between image regions and words</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attentional-Self-Modulation-Generator"><span class="toc-number">2.4.</span> <span class="toc-text">Attentional Self-Modulation Generator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-Discriminator"><span class="toc-number">2.5.</span> <span class="toc-text">Contrastive Discriminator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Experiment-Setup"><span class="toc-number">3.</span> <span class="toc-text">Experiment Setup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">3.1.</span> <span class="toc-text">数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87"><span class="toc-number">3.2.</span> <span class="toc-text">评价指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Results"><span class="toc-number">4.</span> <span class="toc-text">Results</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87%E7%BB%93%E6%9E%9C"><span class="toc-number">4.1.</span> <span class="toc-text">评价指标结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+        <p>使用对比学习的思路，来做Text-to-Image任务，Google Research发表在<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content/CVPR2021/papers/Zhang_Cross-Modal_Contrastive_Learning_for_Text-to-Image_Generation_CVPR_2021_paper.pdf">CVPR 2021</a>，官方代码在<a target="_blank" rel="noopener" href="https://github.com/google-research/xmcgan_image_generation">xmcgan_image_generation</a>， 但是作者没有公开预训练好的权重，甚至样本。。</p>
+<span id="more"></span>
+<h2 id="Motivation：使用对比学习来做Text-to-Image"><a href="#Motivation：使用对比学习来做Text-to-Image" class="headerlink" title="Motivation：使用对比学习来做Text-to-Image"></a>Motivation：使用对比学习来做Text-to-Image</h2><p>作者提出可以使用对比学习来完成Text-to-Image任务，直接使用one-stage的生成器，而不是通常的multi-stage的思路（将生成任务划分为几个子任务，如box-to-mask-to-image）。这使得，作者提到，目前的工作一方面仅针对特定域，例如针对鸟类，一方面也需要更细致化的标签来训练生成器，例如上面所说的box。而本文提出的方法，只需要Image和其对应的Text作为训练集。</p>
+<p>论文方法的思路，主要沿着如何解决下面三个问题进行：</p>
+<ol>
+<li>生成的图像<strong>整体上</strong>需要和描述文本对应</li>
+<li>对于同样的描述文本，生成的图像需要和真实图像对应</li>
+<li>单个图像区域应该是可识别的并且与句子中的单词一致。</li>
+</ol>
+<p>这里所说的“对应”即Image和Text在语义上，要合理地对应，要生成正确的图像内容。这三个问题实际上和作者提出的三个损失函数一一对应，应当结合下文理解。</p>
+<h2 id="Method：三个对比损失和GAN"><a href="#Method：三个对比损失和GAN" class="headerlink" title="Method：三个对比损失和GAN"></a>Method：三个对比损失和GAN</h2><p>使用GAN作为基本的方法，同时作者使用对比学习的思路针对上面三个问题设计了三个损失函数，来设计、训练生成器和判别器。</p>
+<p>下文先介绍作者提出的三个损失函数，损失函数主要牵扯到一幅图像和一段文本的度量。每个损失函数的计算都需要一对正确对应的样本$x_i$和$s_i$（称$s_i$为正样本），和$M$个和$x_i$无关的负样本$s_j$；每个损失函数也都需要一个score function。</p>
+<p>在损失函数之后，介绍GAN的生成器和判别器。</p>
+<h3 id="Image-text-contrastive-loss"><a href="#Image-text-contrastive-loss" class="headerlink" title="Image-text contrastive loss"></a>Image-text contrastive loss</h3><p>针对第一个问题，给出Text和Image<strong>整体上</strong>的对比损失。</p>
+<p>给定一个图像$x$和描述$s$，定义score function，其中cos指计算向量的余弦相似度，$\tau$是一个超参数（Temparature hyper-parameter）：</p>
+<script type="math/tex; mode=display">S_{sent}(x,s)=cos(f_{img}(x), f_{sent}(s))/\tau</script><p>其中$f<em>{img}$是一个图像的encoder，；而$f</em>{sent}$是文本的encoder。这两个编码器负责分别将文本和图像映射到<strong>同一个</strong>向量空间，下文中的编码器也是一样的功能。</p>
+<p>可以看到，作者定义的这个函数也就是计算了图像$x$和描述$s$的相似度，如果是一个合理的对应文本-图像对，那么相似度应该大，而不合理对应的，函数给出的分数应该小。</p>
+<p>然后，其对比损失即为：</p>
+<script type="math/tex; mode=display">\mathcal{L}_{sent}(x_i, s_i)=-\text{log}\frac{\text{exp}(S_{sent}(x_i, s_i))}{\sum^M_{j=1}\text{exp}(S_{sent}(x_i,s_j))}</script><p>如何理解这一称之为对比损失的函数？上面的两个编码器，将图像$x$和描述$s$都映射到了同一个向量空间的一个<strong>球面</strong>上（超球面），一个想要的结果是：$x$和正样本在球面上距离很近，而负样本和$x$距离较远。这也就是去最小化$\mathcal{L}_{sent}$，其分子和分母分别表示正样本和负样本与图像的相似度量。</p>
+<h3 id="Contrastive-loss-between-fake-and-real-images-with-shared-description"><a href="#Contrastive-loss-between-fake-and-real-images-with-shared-description" class="headerlink" title="Contrastive loss between fake and real images with shared description"></a>Contrastive loss between fake and real images with shared description</h3><p>针对第二个问题，给出生成的图像和真实的图像的对比损失。</p>
+<p>损失$\mathcal{L}_{sent}$无法保证生成器生成的图像有实际的意义。为了使得生成器生成具有实际且具有正确内容的图像，使用同样的思路，对比损失：</p>
+<script type="math/tex; mode=display">\mathcal{L}_{img}(x_i, G(z_i,s_i))=-\text{log}\frac{\text{exp}(S_{img}(x_i, G(z_i,s_i)))}{\sum^M_{j=1}\text{exp}(S_{img}(x_i,G(z_i,s_j)))}</script><p>其中$G$也就是生成器，而$S<em>{img}(x,x’)=cos(f</em>{img}(x), f<em>{img}(x’))/\tau$，作为图像$x$和图像$x’$的score function。其与损失函数$\mathcal{L}</em>{sent}$思路一致，$\mathcal{L}<em>{sent}$负责度量文本和图像之间的对应关系，而$\mathcal{L}</em>{img}$度量图像和图像之间的对应关系，使得生成的图像接近真实的图像。</p>
+<h3 id="Contrastive-loss-between-image-regions-and-words"><a href="#Contrastive-loss-between-image-regions-and-words" class="headerlink" title="Contrastive loss between image regions and words"></a>Contrastive loss between image regions and words</h3><p>针对第三个问题，给出图像区域和词之间的对比损失。这个损失是为了使得生成图像<strong>其中的</strong>内容能够和描述的词对应上，是进一步细致的要求。对比损失也是图像和文本之间的度量，为：</p>
+<script type="math/tex; mode=display">\mathcal{L}_{\text {word }}\left(x_{i}, s_{i}\right)=-\log \frac{\exp \left(\mathcal{S}_{\text {word }}\left(x_{i}, s_{i}\right)\right)}{\sum_{j=1}^{M} \exp \left(\mathcal{S}_{\text {word }}\left(x_{i}, s_{j}\right)\right)}</script><p>其中的score function如下，作者使用了soft attention来完成。即，针对每一个词$w<em>i$，计算其在每一个区域上的attention权重$\alpha</em>{i,j}$，然后得到这个词相应的对齐的区域特征（aligned region vector）也就是$c_i$。然后score function使用词$w_h$和$c_h$计算得到最后的分数。</p>
+<script type="math/tex; mode=display">\mathcal{S}_{\text {word}}(x, s)=\log \left(\sum_{h=1}^{T} \exp \left(\rho_{2} \cos \left(f_{\text {word}}\left(w_{h}\right), c_{h}\right)\right)\right)^{\frac{1}{\rho_{2}}} / \tau</script><script type="math/tex; mode=display">c_i=\sum^R_{j=1}\alpha_{i,j} f_{region}(r_j)</script><script type="math/tex; mode=display">\alpha_{i, j}=\frac{\exp \left(\rho_{1} \cos \left(f_{\text {word }}\left(w_{i}\right), f_{\text {region }}\left(r_{j}\right)\right)\right)}{\sum_{h=1}^{R} \exp \left(\rho_{1} \cos \left(f_{\text {word }}\left(w_{i}\right), f_{\text {region }}\left(r_{h}\right)\right)\right)}</script><p>其中$f<em>{word}$，$f</em>{region}$都是编码器，而$r_j$表示$x$不同的$R$个区域，$w_h$则分别是$s$个$R$个词。$\rho_1, \rho_2$是两个超参数，用以调节整个分布信息熵的大小，分析式子可以看出来，也就是，超参越大，而大者越大，小者越小。</p>
+<h3 id="Attentional-Self-Modulation-Generator"><a href="#Attentional-Self-Modulation-Generator" class="headerlink" title="Attentional Self-Modulation Generator"></a>Attentional Self-Modulation Generator</h3><p>生成器第一层的输入为高斯噪声，以及BERT输出的sentence embedding的拼接起来的向量。然后，作者还使用了BERT的word embeddings来改进了self-modulation。</p>
+<p>self-modulation是对网络中Batch norm的一个改进，使得scale和shift的参数能够和输入相关，由某一个特定的模块计算得到，而不是作为独立于输入的参数存在（独立指，训练一旦结束，scale和shift的参数（即$\gamma$和$\beta$）就固定下来，对任何输入都一样）。这样，BN层就能根据不同的输入，动态地变动其scale和shift的强度。</p>
+<p>作者使用word embeddings改进了self-modulation层，使得其不仅仅只和高斯噪声和sentence embedding相关。除了拼接噪声$z$和$e_s$，还有一个利用注意力机制计算出来的与$e_w$和当前层特征$h_j$有关的向量。</p>
+<script type="math/tex; mode=display">c_{j}=\sum_{i=1}^{T} \tilde{\alpha}_{j, i} e_{w_{i}}, \text { where } \tilde{\alpha}_{j, i}=\frac{\exp \left(\rho_{0} \cos \left(e_{w_{i}}, h_{j}\right)\right)}{\sum_{k=1}^{T} \exp \left(\rho_{0} \cos \left(e_{w_{k}}, h_{j}\right)\right)}</script><p>如示意图，最后将三个向量拼接起来，用全连接网络计算得到之后的特征$h’_j$：</p>
+<script type="math/tex; mode=display">h_{j}^{\prime}=\gamma_{j}\left(\text { concat }\left(z, e_{s}, c_{j}\right)\right) \odot \frac{h_{j}-\mu}{\sigma}+\beta_{j}\left(\operatorname{concat}\left(z, e_{s}, c_{j}\right)\right)</script><p><img src="/2021/12/16/paper_notes/xmcgan/Untitled.png" alt="overview"></p>
+<h3 id="Contrastive-Discriminator"><a href="#Contrastive-Discriminator" class="headerlink" title="Contrastive Discriminator"></a>Contrastive Discriminator</h3><p>判别器一方面充当GAN中辨别图像真假的角色，一方面也要充当损失函数中图像的编码器，而文本的编码器，则分别使用BERT的sentence embedding和word embeddings作为整个句子和其中词的编码。如图，也就是说对于一张图像（real或fake），一方面是预测Real/Fake的分类损失，一方面是分别作为损失$\mathcal{L}<em>{sent}$和$\mathcal{L}</em>{word}$中图像的编码器（图中的Global/Region Feats），其中损失的计算分别需要和BERT的输出$e_s$、$e_w$计算点积。</p>
+<p>训练判别器的图像编码器，只使用真实图像来训练，因为生成器可能生成不正确的（训练开始阶段，生成图像可能是无意义的）图像，影响编码器的训练；另外，作者在论文中说使用VGG网络来编码$\mathcal{L}_{img}$计算过程中的真实、生成的图像，不过在作者开源的代码里，默认用的是resnet50。</p>
+<p>训练的算法如下，注意判别器和生成器的损失函数计算不同。</p>
+<p><img src="/2021/12/16/paper_notes/xmcgan/Untitled%201.png" alt="algorithm"></p>
+<h2 id="Experiment-Setup"><a href="#Experiment-Setup" class="headerlink" title="Experiment Setup"></a>Experiment Setup</h2><h3 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h3><p>作者使用的数据集包括：COCO-14、LN-COCO、LN-OpenImages。可以看出MS-COCO的文本较短，而后两者文本较长，难度更大。</p>
+<p><img src="/2021/12/16/paper_notes/xmcgan/Untitled%202.png" alt="table1"></p>
+<h3 id="评价指标"><a href="#评价指标" class="headerlink" title="评价指标"></a>评价指标</h3><p>随机选择30000个captions生成图像，评估包括下面几个方面：</p>
+<ul>
+<li>Image quality：<ul>
+<li>Inception Score (IS)，基于inception v3输出的类别概率分布，值越大越好</li>
+<li>Frechet Inception Distance (FID)，使用的是真实图像和生成图像在两个多元高斯分布之间的Frechet距离，值越小越好。</li>
+</ul>
+</li>
+<li>Text-Image Alignment：<ul>
+<li>R-precision：作者使用的编码器是在额外的数据集上训练的</li>
+<li>Semantic Object Accuracy (SOA)：包括SOA-C和SOA-I</li>
+</ul>
+</li>
+<li>Human evaluation：随机选择1000个captions生成对应图像，5个人打分。</li>
+</ul>
+<h2 id="Results"><a href="#Results" class="headerlink" title="Results"></a>Results</h2><h3 id="评价指标结果"><a href="#评价指标结果" class="headerlink" title="评价指标结果"></a>评价指标结果</h3><ul>
+<li><p>Human evaluation：由图3看出，显示作者的方法最好</p>
+<p>  <img src="/2021/12/16/paper_notes/xmcgan/Untitled%203.png" alt="figure3"></p>
+</li>
+</ul>
+<ul>
+<li>COCO-14数据集上，在FID和R-precision两项指标上，作者方法获得了SOTA，但是在IS、SOA指标上，表现不如CP-GAN；而在LN-COCO、LN-OpenImage数据集上，作者除了SOA指标都获得了最好成绩。</li>
+</ul>
+<p><img src="/2021/12/16/paper_notes/xmcgan/Untitled%204.png" alt="table2"></p>
+<p>IS和SOA指标侧重于衡量各个类别（例如，对于IS来说指InceptionV3模型的输出类别）之间的性能表现，而对于单个类别内的性能表现，该指标本身不够重视。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>作者提出使用对比学习来完成Text-to-Image任务，思路很清晰，使用对比学习来设计GAN的损失函数。论文内容可以总结为：分别使用编码器将图像和文本映射到一个超球面，分别通过三个损失函数，使得生产的图像和其输入的描述文本在球面上接近、和描述文本在真实世界中的图像接近，且生成的图像具有与文本词对应的内容。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+	  
+	  <!-- 百度分享 Start -->
+	  <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+	  <!-- 百度分享 End -->
+    
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GAN/" rel="tag">GAN</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Text-to-Image/" rel="tag">Text-to-Image</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" rel="tag">对比学习</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%B7%A8%E6%A8%A1%E6%80%81/" rel="tag">跨模态</a></li></ul>
+
+	  
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2022/03/31/suibi/code_inject/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          代码注入：调用CreateProcess使explorer启动目标进程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/12/05/paper_notes/member_inference_attack/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">论文笔记：Membership Inference Attacks Against Machine Learning Models, S&amp;P 2017</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+  <section id="comments" class="vcomment">
+
+  </section>
+</section>
+        
+          
+  <div id="toc" class="toc-aside">
+  <h2 class="toc-title">Contents</h2>
+    
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Motivation%EF%BC%9A%E4%BD%BF%E7%94%A8%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0%E6%9D%A5%E5%81%9AText-to-Image"><span class="toc-number">1.</span> <span class="toc-text">Motivation：使用对比学习来做Text-to-Image</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Method%EF%BC%9A%E4%B8%89%E4%B8%AA%E5%AF%B9%E6%AF%94%E6%8D%9F%E5%A4%B1%E5%92%8CGAN"><span class="toc-number">2.</span> <span class="toc-text">Method：三个对比损失和GAN</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Image-text-contrastive-loss"><span class="toc-number">2.1.</span> <span class="toc-text">Image-text contrastive loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-loss-between-fake-and-real-images-with-shared-description"><span class="toc-number">2.2.</span> <span class="toc-text">Contrastive loss between fake and real images with shared description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-loss-between-image-regions-and-words"><span class="toc-number">2.3.</span> <span class="toc-text">Contrastive loss between image regions and words</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Attentional-Self-Modulation-Generator"><span class="toc-number">2.4.</span> <span class="toc-text">Attentional Self-Modulation Generator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contrastive-Discriminator"><span class="toc-number">2.5.</span> <span class="toc-text">Contrastive Discriminator</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Experiment-Setup"><span class="toc-number">3.</span> <span class="toc-text">Experiment Setup</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="toc-number">3.1.</span> <span class="toc-text">数据集</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87"><span class="toc-number">3.2.</span> <span class="toc-text">评价指标</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Results"><span class="toc-number">4.</span> <span class="toc-text">Results</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%84%E4%BB%B7%E6%8C%87%E6%A0%87%E7%BB%93%E6%9E%9C"><span class="toc-number">4.1.</span> <span class="toc-text">评价指标结果</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li></ol>
+    
+  </div>
+
+<aside id="sidebar">
+
+  
+    
+<div class="widget-wrap">
+  <h3 class="widget-title">ABOUT ME</h3>
+  <ul class="widget about-me">
+    
+    <li><img class="author" title="About me" src="/images/coffee_onetwo.jpg" /></li>
+    
+    
+    <li>Hi, LuYongjian! LYJNB!</li>
+    
+  </ul>
+</div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/%E8%AE%BA%E6%96%87%E7%AC%94%E8%AE%B0/">论文笔记</a><span class="category-list-count">13</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">阅读笔记</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/%E9%9A%8F%E7%AC%94/">随笔</a><span class="category-list-count">9</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/CTC/" style="font-size: 13px; color: #7dc3de">CTC</a> <a href="/tags/GAN/" style="font-size: 14.17px; color: #6dc1b9">GAN</a> <a href="/tags/PyTorch/" style="font-size: 13px; color: #7dc3de">PyTorch</a> <a href="/tags/RTX-4090/" style="font-size: 13px; color: #7dc3de">RTX 4090</a> <a href="/tags/ReLU/" style="font-size: 14.17px; color: #6dc1b9">ReLU</a> <a href="/tags/Text-to-Image/" style="font-size: 13px; color: #7dc3de">Text-to-Image</a> <a href="/tags/Windows%E7%BC%96%E7%A8%8B/" style="font-size: 13px; color: #7dc3de">Windows编程</a> <a href="/tags/copyright/" style="font-size: 13px; color: #7dc3de">copyright</a> <a href="/tags/nvidia/" style="font-size: 13px; color: #7dc3de">nvidia</a> <a href="/tags/tensorflow-1-15/" style="font-size: 13px; color: #7dc3de">tensorflow 1.15</a> <a href="/tags/viterbi%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">viterbi算法</a> <a href="/tags/%E4%B8%AD%E5%BF%83%E5%8C%96%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">中心化差分隐私</a> <a href="/tags/%E4%BA%8C%E5%80%BC%E5%8C%96/" style="font-size: 13px; color: #7dc3de">二值化</a> <a href="/tags/%E4%BB%A3%E7%A0%81%E6%B3%A8%E5%85%A5/" style="font-size: 13px; color: #7dc3de">代码注入</a> <a href="/tags/%E4%BD%8E%E9%80%9A%E6%BB%A4%E6%B3%A2/" style="font-size: 13px; color: #7dc3de">低通滤波</a> <a href="/tags/%E4%BD%8E%E9%80%9A%E6%BB%A4%E6%B3%A2%E5%99%A8/" style="font-size: 13px; color: #7dc3de">低通滤波器</a> <a href="/tags/%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2/" style="font-size: 13px; color: #7dc3de">内存泄露</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">分布式学习</a> <a href="/tags/%E5%89%8D%E5%90%91%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">前向算法</a> <a href="/tags/%E5%8D%8F%E4%BD%9C%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">协作学习</a> <a href="/tags/%E5%8F%8C%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC/" style="font-size: 13px; color: #7dc3de">双线性插值</a> <a href="/tags/%E5%8F%AF%E8%A7%86%E5%8C%96/" style="font-size: 16.5px; color: #4dbc6f">可视化</a> <a href="/tags/%E5%8F%AF%E8%A7%A3%E9%87%8A%E6%80%A7/" style="font-size: 17.67px; color: #3db94a">可解释性</a> <a href="/tags/%E5%90%8E%E9%97%A8%E6%94%BB%E5%87%BB/" style="font-size: 13px; color: #7dc3de">后门攻击</a> <a href="/tags/%E5%9B%BE%E5%83%8F%E5%88%86%E5%89%B2/" style="font-size: 13px; color: #7dc3de">图像分割</a> <a href="/tags/%E5%9B%BE%E7%89%87%E8%AF%86%E5%88%AB/" style="font-size: 13px; color: #7dc3de">图片识别</a> <a href="/tags/%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" style="font-size: 16.5px; color: #4dbc6f">对抗攻击</a> <a href="/tags/%E5%AF%B9%E6%8A%97%E6%A0%B7%E6%9C%AC/" style="font-size: 14.17px; color: #6dc1b9">对抗样本</a> <a href="/tags/%E5%AF%B9%E6%AF%94%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">对比学习</a> <a href="/tags/%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">差分隐私</a> <a href="/tags/%E6%94%BF%E6%B2%BB%E7%BB%8F%E6%B5%8E%E5%AD%A6%E6%A6%82%E8%AE%BA/" style="font-size: 13px; color: #7dc3de">政治经济学概论</a> <a href="/tags/%E6%95%B0%E5%AD%97%E4%BF%A1%E5%8F%B7%E5%A4%84%E7%90%86/" style="font-size: 14.17px; color: #6dc1b9">数字信号处理</a> <a href="/tags/%E6%95%B0%E5%AD%97%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/" style="font-size: 14.17px; color: #6dc1b9">数字图像处理</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%8A%95%E6%AF%92/" style="font-size: 13px; color: #7dc3de">数据投毒</a> <a href="/tags/%E6%9C%AC%E5%9C%B0%E5%8C%96%E5%B7%AE%E5%88%86%E9%9A%90%E7%A7%81/" style="font-size: 13px; color: #7dc3de">本地化差分隐私</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 14.17px; color: #6dc1b9">机器学习</a> <a href="/tags/%E6%A8%A1%E5%9E%8B%E9%B2%81%E6%A3%92%E6%80%A7/" style="font-size: 13px; color: #7dc3de">模型鲁棒性</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px; color: #1db400">深度学习</a> <a href="/tags/%E7%89%88%E6%9D%83%E4%BF%9D%E6%8A%A4/" style="font-size: 13px; color: #7dc3de">版权保护</a> <a href="/tags/%E7%94%9F%E6%88%90%E5%AF%B9%E6%8A%97%E7%BD%91%E7%BB%9C/" style="font-size: 13px; color: #7dc3de">生成对抗网络</a> <a href="/tags/%E7%94%9F%E6%88%90%E6%A8%A1%E5%9E%8B/" style="font-size: 13px; color: #7dc3de">生成模型</a> <a href="/tags/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C/" style="font-size: 18.83px; color: #2db725">神经网络</a> <a href="/tags/%E8%81%94%E9%82%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 13px; color: #7dc3de">联邦学习</a> <a href="/tags/%E8%A7%86%E9%A2%91/" style="font-size: 13px; color: #7dc3de">视频</a> <a href="/tags/%E8%B7%A8%E6%A8%A1%E6%80%81/" style="font-size: 13px; color: #7dc3de">跨模态</a> <a href="/tags/%E8%BF%87%E6%8B%9F%E5%90%88/" style="font-size: 13px; color: #7dc3de">过拟合</a> <a href="/tags/%E9%87%8D%E9%87%87%E6%A0%B7/" style="font-size: 13px; color: #7dc3de">重采样</a> <a href="/tags/%E9%87%8D%E9%87%87%E6%A0%B7%E7%AE%97%E6%B3%95/" style="font-size: 13px; color: #7dc3de">重采样算法</a> <a href="/tags/%E9%98%88%E5%80%BC%E5%A4%84%E7%90%86/" style="font-size: 13px; color: #7dc3de">阈值处理</a> <a href="/tags/%E9%99%8D%E9%87%87%E6%A0%B7/" style="font-size: 13px; color: #7dc3de">降采样</a> <a href="/tags/%E9%9A%90%E7%A7%81%E4%BF%9D%E6%8A%A4/" style="font-size: 15.33px; color: #5dbe94">隐私保护</a> <a href="/tags/%E9%9A%90%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB/" style="font-size: 13px; color: #7dc3de">隐马尔可夫</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E5%AF%B9%E6%8A%97%E6%94%BB%E5%87%BB/" style="font-size: 14.17px; color: #6dc1b9">音频对抗攻击</a> <a href="/tags/%E9%9F%B3%E9%A2%91%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 13px; color: #7dc3de">音频预处理</a> <a href="/tags/%E9%A2%91%E8%B0%B1%E6%B7%B7%E5%8F%A0/" style="font-size: 13px; color: #7dc3de">频谱混叠</a> <a href="/tags/%E9%A9%AC%E5%B0%94%E5%8F%AF%E5%A4%AB/" style="font-size: 13px; color: #7dc3de">马尔可夫</a>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/02/">February 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/01/">January 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/10/">October 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/03/">March 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">December 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/11/">November 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">September 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2023/02/17/suibi/image_lowpass_filtering/">Image Low-pass Filtering Algorithms Ideal/Butterworth/Gaussian (PyTorch Implementation) 图像低通滤波算法PyTorch实现</a>
+          </li>
+        
+          <li>
+            <a href="/2023/01/09/suibi/nv_tf1155_bug/">nvidia-tensorflow 1.15.5的signal模块的一个内存泄漏bug</a>
+          </li>
+        
+          <li>
+            <a href="/2022/10/18/paper_notes/cvpr20_video_backdoor/">CVPR2020 Clean-Label Backdoor Attacks on Video Recognition Models</a>
+          </li>
+        
+          <li>
+            <a href="/2022/03/31/suibi/code_inject/">代码注入：调用CreateProcess使explorer启动目标进程</a>
+          </li>
+        
+          <li>
+            <a href="/2021/12/16/paper_notes/xmcgan/">论文笔记：Cross-Modal Contrastive Learning for Text-to-Image Generation, CVPR 2021</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+
+  
+    
+<div class="widget-wrap">
+  <h3 class="widget-title">Links</h3>
+  <ul class="widget">
+    
+    <li><a href="https://qgrain.github.io/" target="_BLANK">Zhiyu&#39;s Blog</a></li>
+    
+    <li><a href="https://github.com/CassiniHuy" target="_BLANK">CassiniHuy&#39;s Github</a></li>
+    
+    <li><a href="https://www.marxists.org/chinese/marx/index.htm" target="_BLANK">中文马克思主义文库</a></li>
+    
+    <li><a href="https://www.zdic.net/" target="_BLANK">汉典</a></li>
+    
+  </ul>
+</div>
+
+
+  
+
+</aside>
+
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2023 cassiniwei@outlook.com<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a> and Theme by <a href="https://github.com/howiefh/hexo-theme-landscape-f" target="_blank" title="Landscape-F">Landscape-F</a>
+    
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<!-- 百度分享 start -->
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","douban","bdysc","sqq","qq","hi","baidu","huaban","youdao","sdo","mail","xg","diandian","fx","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<!-- 百度分享 end -->
+
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+<div class="bottom-btn">
+
+	<a class="icon-gotop" href="javascript:void(0)" title="返回顶部"></a>
+	
+<script src="/js/gotop.js"></script>
+
+
+
+	<a class="icon-toc-toggle" href="javascript:void(0)" title="文章目录"></a>
+	
+<script src="/js/toc_aside_toggle.js"></script>
+
+
+</div>
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+
+<script>
+    var GUEST_INFO = ['nick','mail','link'];
+    var guest_info = 'nick,mail,link'.split(',').filter(function(item){
+        return GUEST_INFO.indexOf(item) > -1
+    });
+    var notify = 'true' == true;
+    var verify = 'true' == true;
+    new Valine({
+        el: '.vcomment',
+        notify: notify,
+        verify: verify,
+        appId: "sA5b5bSKVOumVxcKtX8NUqFk-gzGzoHsz",
+        appKey: "glFUguQG84y2GTeKhQR0RNAX",
+        placeholder: "Feel free to comment but new comment notification is disabled. Please contact me by cassiniwei@outlook.com if needed.",
+        pageSize:'10',
+        avatar:'mm',
+        lang:''
+    });
+</script>
+
+
+  </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+</html>
