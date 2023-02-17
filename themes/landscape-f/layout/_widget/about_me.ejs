@@ -1,0 +1,15 @@
+<% if (theme.about_me){ %>
+<div class="widget-wrap">
+  <h3 class="widget-title"><%= theme.about_me.title || __('about_me') %></h3>
+  <ul class="widget about-me">
+    <% if (theme.about_me.avatar){ %>
+    <li><img class="author" title="About me" src="<%= theme.about_me.avatar %>" /></li>
+    <% } else {%>
+    <li><img class="author" title="About me" src="<%- gravatar(theme.about_me.gravatar, 180) %>" /></li>
+    <% } %>
+    <% theme.about_me.texts.forEach(function(item){ %>
+    <li><%- item %></li>
+    <% }); %>
+  </ul>
+</div>
+<% } %>

@@ -1,0 +1,74 @@
+<% if (config.disqus_shortname){ %>
+<script>
+var disqus_shortname = '<%= config.disqus_shortname %>';
+<% if (page.permalink){ %>
+var disqus_config = function () {
+  this.page.url = '<%= page.permalink %>';
+  this.page.identifier = '<%= page.path %>';
+  this.page.title = '<%= page.title %>';
+};
+<% } %>
+(function() {
+var d = document, s = d.createElement('script');
+s.src = '//<%= config.disqus_shortname %>.disqus.com/<% if (page.comments){ %>embed.js<% } else { %>count.js<% } %>';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<% } %>
+
+<% if ((page.layout == 'post'|| page.layout == 'page') && theme.baidushare){ %>
+<!-- 百度分享 start -->
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":["mshare","douban","bdysc","sqq","qq","hi","baidu","huaban","youdao","sdo","mail","xg","diandian","fx","copy","print"],"bdPic":"","bdStyle":"1","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+<!-- 百度分享 end -->
+<% } %>
+
+<%- js('js/jquery-3.4.1.min.js') %>
+
+<% if (theme.fancybox){ %>
+  <%- js('fancybox/jquery.fancybox.min.js') %>
+<% } %>
+
+<%- partial('bottom-btn') %>
+
+<%- js('js/script') %>
+<%- partial('google-analytics') %>
+<%- partial('gauges-analytics') %>
+
+<% if (theme.widgets.indexOf('calendar') != -1){ %>
+  <%- js('js/languages') %>
+  <%- js('js/calendar') %>
+
+  <script type="text/javascript">
+  $(function() {
+    <% if (typeof theme.calendar.options === 'object') { %>
+    $('#calendar').aCalendar('<%= theme.calendar.language || config.language %>', $.extend(<%- JSON.stringify(theme.calendar.options) %>, {root:'<%= config.root %>', calendarSingle:<%= config.calendar.single %>, calendarRoot:'<%= config.calendar.root %>'}));
+    <% } else { %>
+    $('#calendar').aCalendar('<%= theme.calendar.language || config.language %>', {root:'<%= config.root %>', calendarSingle:<%= config.calendar.single %>, calendarRoot:'<%= config.calendar.root %>'});
+    <% } %>
+  });
+  </script>
+<% } %>
+
+<% if(theme.valine.enable && theme.valine.appId && theme.valine.appKey){ %>
+  <%- js('https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js') %>
+<script>
+    var GUEST_INFO = ['nick','mail','link'];
+    var guest_info = '<%= theme.valine.guest_info %>'.split(',').filter(function(item){
+        return GUEST_INFO.indexOf(item) > -1
+    });
+    var notify = '<%= theme.valine.notify %>' == true;
+    var verify = '<%= theme.valine.verify %>' == true;
+    new Valine({
+        el: '.vcomment',
+        notify: notify,
+        verify: verify,
+        appId: "<%= theme.valine.appId %>",
+        appKey: "<%= theme.valine.appKey %>",
+        placeholder: "<%= theme.valine.placeholder %>",
+        pageSize:'<%= theme.valine.pageSize %>',
+        avatar:'<%= theme.valine.avatar %>',
+        lang:'<%= theme.valine.lang %>'
+    });
+</script>
+<% } %>

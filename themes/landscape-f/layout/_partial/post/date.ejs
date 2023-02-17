@@ -1,0 +1,9 @@
+<% if (footer == false) { %>
+<a href="<%- url_for(post.path) %>" class="<%= class_name %>">
+  <time class="dt-published" datetime="<%= date_xml(post.date) %>" itemprop="datePublished"><%= date(post.date, date_format) %></time>
+</a>
+<% } else if (post.updated!=null && theme.display_updated != false) { %>
+<span>
+<%= __('updated') %>:<time datetime="<%= date_xml(post.updated) %>" itemprop="dateModified"><%= date(post.updated, date_format) %></time>
+</span>
+<% } %>
