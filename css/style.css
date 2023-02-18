@@ -158,7 +158,7 @@ body,
 }
 body {
   background: url("https://cdn.jsdelivr.net/gh/howiefh/assets/img/bg.png") #eee;
-  font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font: 16px -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-text-size-adjust: 100%;
 }
 .outer {
@@ -396,12 +396,12 @@ body {
   letter-spacing: 2px;
 }
 #subtitle {
-  font-size: 16px;
-  line-height: 16px;
+  font-size: 18px;
+  line-height: 18px;
   letter-spacing: 1px;
 }
 #subtitle-wrap {
-  margin-top: 16px;
+  margin-top: 18px;
 }
 #main-nav {
   float: left;
@@ -431,9 +431,9 @@ body {
 .nav-icon {
   font-family: FontAwesome;
   text-align: center;
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
   padding: 20px 13px;
   position: relative;
   cursor: pointer;
@@ -675,7 +675,7 @@ a.article-title:hover {
   margin-left: 45px;
 }
 .article-entry blockquote footer {
-  font-size: 14px;
+  font-size: 16px;
   margin: 1.6em 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
@@ -1185,7 +1185,7 @@ a.article-title:hover {
   border-width: 1px 0;
   overflow: auto;
   color: #ccc;
-  line-height: 22.400000000000002px;
+  line-height: 25.6px;
 }
 .article-entry .highlight .gutter pre,
 .article-entry .gist .gist-file .gist-data .line-numbers {
@@ -1241,7 +1241,7 @@ a.article-title:hover {
   padding-right: 20px;
 }
 .article-entry .highlight .line {
-  height: 22.400000000000002px;
+  height: 25.6px;
 }
 .article-entry .highlight .line.marked {
   background: #515151;
@@ -1850,7 +1850,7 @@ pre .javascript .function {
   -webkit-border-radius: 3px;
   padding: 4px 5px;
   line-height: 16px;
-  font-size: 14px;
+  font-size: 16px;
 }
 .tag-list-link:hover,
 .archive-list-link:hover,
