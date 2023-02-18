@@ -81,6 +81,12 @@ busuanzi: false
 calendar:
   language: zh-CN
 
+# hexo-renderer-pandoc (or hexo-renderer-kramed) required for full MathJax support.
+mathjax:
+  enable: true
+  # See: https://mhchem.github.io/MathJax-mhchem/
+  mhchem: true
+
 # valine comment system. https://valine.js.org
 valine:
   enable: true
