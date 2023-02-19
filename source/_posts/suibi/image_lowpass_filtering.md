@@ -60,7 +60,7 @@ $$
 where $D(u,v)$ is the distance to the matrix center for each pixel, and $D_0$ is the cutoff frequency.
 With a greater $D_0$, more high frequencies are retained and therefore less information lost.
 
-![Untitled](image_lowpass_filtering/Untitled.png)
+![Ideal Low-pass Filter](image_lowpass_filtering/Ideal-Low-Pass-Filter.png)
 
 ### Gaussian 高斯滤波器
 
@@ -68,7 +68,7 @@ $$
 H(u, v)=\exp({-D^2(u, v)/2{D_0}^2})
 $$
 
-![Untitled](image_lowpass_filtering/Untitled%201.png)
+![Gaussian Low-pass Filter](image_lowpass_filtering/Gaussian-Low-Pass-Filter.png)
 
 ### Butterworth 布特沃斯滤波器
 
@@ -80,7 +80,7 @@ where $n$ is the order of the Butterworth filter.
 
 With a higher $n$, the filter is sharper, which approachs more to the ideal filter; otherwise it approaches to the gaussian filter.
 
-![Untitled](image_lowpass_filtering/Untitled%202.png)
+![Butterworth Low-pass Filter](image_lowpass_filtering/Butterworth-Low-Pass-Filter.png)
 
 ## Usage Example
 
