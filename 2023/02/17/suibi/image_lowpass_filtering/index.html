@@ -5,27 +5,27 @@
   
 
   
-  <title>Image Low-pass Filtering Algorithms Ideal/Butterworth/Gaussian (PyTorch Implementation) 图像低通滤波算法PyTorch实现 | 渭城岸的博客</title>
+  <title>Image Low-pass Filtering Algorithms Ideal/Butterworth/Gaussian (PyTorch Implementation) 图像低通滤波算法PyTorch实现 | CassiniWei&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="苟日新，日日新，又日新。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Image Low-pass Filtering Algorithms Ideal&#x2F;Butterworth&#x2F;Gaussian (PyTorch Implementation) 图像低通滤波算法PyTorch实现">
 <meta property="og:url" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/index.html">
-<meta property="og:site_name" content="渭城岸的博客">
+<meta property="og:site_name" content="CassiniWei&#39;s Blog">
 <meta property="og:description" content="苟日新，日日新，又日新。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Untitled.png">
-<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Untitled%201.png">
-<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Untitled%202.png">
+<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Ideal-Low-Pass-Filter.png">
+<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Gaussian-Low-Pass-Filter.png">
+<meta property="og:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Butterworth-Low-Pass-Filter.png">
 <meta property="article:published_time" content="2023-02-17T05:13:51.000Z">
-<meta property="article:modified_time" content="2023-02-17T06:55:48.137Z">
+<meta property="article:modified_time" content="2023-02-20T01:42:53.792Z">
 <meta property="article:author" content="cassiniwei@outlook.com">
 <meta property="article:tag" content="数字图像处理">
 <meta property="article:tag" content="低通滤波">
 <meta property="article:tag" content="降采样">
 <meta property="article:tag" content="PyTorch">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Untitled.png">
+<meta name="twitter:image" content="http://weichengan.com/2023/02/17/suibi/image_lowpass_filtering/Ideal-Low-Pass-Filter.png">
   
   
     <link rel="icon" href="/images/favicon.ico">
@@ -169,7 +169,7 @@ mjx-container[display="true"] + br {
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">渭城岸的博客</a>
+        <a href="/" id="logo">CassiniWei&#39;s Blog</a>
       </h1>
       
     </div>
@@ -246,13 +246,13 @@ mjx-container[display="true"] + br {
 <h3 id="Ideal-理想低通滤波器"><a href="#Ideal-理想低通滤波器" class="headerlink" title="Ideal 理想低通滤波器"></a>Ideal 理想低通滤波器</h3><script type="math/tex; mode=display">
 H(u, v)=\begin{cases} 1,\quad D(u, v) \le D_0 \\ 0,\quad D(u, v) > D_0
 \end{cases}</script><p>where <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.566ex;" xmlns="http://www.w3.org/2000/svg" width="7.031ex" height="2.262ex" role="img" focusable="false" viewbox="0 -750 3107.7 1000"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"/></g><g data-mml-node="mo" transform="translate(828,0)"><path data-c="28" d="M94 250Q94 319 104 381T127 488T164 576T202 643T244 695T277 729T302 750H315H319Q333 750 333 741Q333 738 316 720T275 667T226 581T184 443T167 250T184 58T225 -81T274 -167T316 -220T333 -241Q333 -250 318 -250H315H302L274 -226Q180 -141 137 -14T94 250Z"/></g><g data-mml-node="mi" transform="translate(1217,0)"><path data-c="1D462" d="M21 287Q21 295 30 318T55 370T99 420T158 442Q204 442 227 417T250 358Q250 340 216 246T182 105Q182 62 196 45T238 27T291 44T328 78L339 95Q341 99 377 247Q407 367 413 387T427 416Q444 431 463 431Q480 431 488 421T496 402L420 84Q419 79 419 68Q419 43 426 35T447 26Q469 29 482 57T512 145Q514 153 532 153Q551 153 551 144Q550 139 549 130T540 98T523 55T498 17T462 -8Q454 -10 438 -10Q372 -10 347 46Q345 45 336 36T318 21T296 6T267 -6T233 -11Q189 -11 155 7Q103 38 103 113Q103 170 138 262T173 379Q173 380 173 381Q173 390 173 393T169 400T158 404H154Q131 404 112 385T82 344T65 302T57 280Q55 278 41 278H27Q21 284 21 287Z"/></g><g data-mml-node="mo" transform="translate(1789,0)"><path data-c="2C" d="M78 35T78 60T94 103T137 121Q165 121 187 96T210 8Q210 -27 201 -60T180 -117T154 -158T130 -185T117 -194Q113 -194 104 -185T95 -172Q95 -168 106 -156T131 -126T157 -76T173 -3V9L172 8Q170 7 167 6T161 3T152 1T140 0Q113 0 96 17Z"/></g><g data-mml-node="mi" transform="translate(2233.7,0)"><path data-c="1D463" d="M173 380Q173 405 154 405Q130 405 104 376T61 287Q60 286 59 284T58 281T56 279T53 278T49 278T41 278H27Q21 284 21 287Q21 294 29 316T53 368T97 419T160 441Q202 441 225 417T249 361Q249 344 246 335Q246 329 231 291T200 202T182 113Q182 86 187 69Q200 26 250 26Q287 26 319 60T369 139T398 222T409 277Q409 300 401 317T383 343T365 361T357 383Q357 405 376 424T417 443Q436 443 451 425T467 367Q467 340 455 284T418 159T347 40T241 -11Q177 -11 139 22Q102 54 102 117Q102 148 110 181T151 298Q173 362 173 380Z"/></g><g data-mml-node="mo" transform="translate(2718.7,0)"><path data-c="29" d="M60 749L64 750Q69 750 74 750H86L114 726Q208 641 251 514T294 250Q294 182 284 119T261 12T224 -76T186 -143T145 -194T113 -227T90 -246Q87 -249 86 -250H74Q66 -250 63 -250T58 -247T55 -238Q56 -237 66 -225Q221 -64 221 250T66 725Q56 737 55 738Q55 746 60 749Z"/></g></g></g></svg></mjx-container> is the distance to the matrix center for each pixel, and <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="2.861ex" height="1.92ex" role="img" focusable="false" viewbox="0 -683 1264.6 848.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"/></g><g data-mml-node="mn" transform="translate(861,-150) scale(0.707)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"/></g></g></g></g></svg></mjx-container> is the cutoff frequency.<br>With a greater <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.375ex;" xmlns="http://www.w3.org/2000/svg" width="2.861ex" height="1.92ex" role="img" focusable="false" viewbox="0 -683 1264.6 848.6"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="msub"><g data-mml-node="mi"><path data-c="1D437" d="M287 628Q287 635 230 637Q207 637 200 638T193 647Q193 655 197 667T204 682Q206 683 403 683Q570 682 590 682T630 676Q702 659 752 597T803 431Q803 275 696 151T444 3L430 1L236 0H125H72Q48 0 41 2T33 11Q33 13 36 25Q40 41 44 43T67 46Q94 46 127 49Q141 52 146 61Q149 65 218 339T287 628ZM703 469Q703 507 692 537T666 584T629 613T590 629T555 636Q553 636 541 636T512 636T479 637H436Q392 637 386 627Q384 623 313 339T242 52Q242 48 253 48T330 47Q335 47 349 47T373 46Q499 46 581 128Q617 164 640 212T683 339T703 469Z"/></g><g data-mml-node="mn" transform="translate(861,-150) scale(0.707)"><path data-c="30" d="M96 585Q152 666 249 666Q297 666 345 640T423 548Q460 465 460 320Q460 165 417 83Q397 41 362 16T301 -15T250 -22Q224 -22 198 -16T137 16T82 83Q39 165 39 320Q39 494 96 585ZM321 597Q291 629 250 629Q208 629 178 597Q153 571 145 525T137 333Q137 175 145 125T181 46Q209 16 250 16Q290 16 318 46Q347 76 354 130T362 333Q362 478 354 524T321 597Z"/></g></g></g></g></svg></mjx-container>, more high frequencies are retained and therefore less information lost.</p>
-<p><img src="/2023/02/17/suibi/image_lowpass_filtering/Untitled.png" alt="Untitled"></p>
+<p><img src="/2023/02/17/suibi/image_lowpass_filtering/Ideal-Low-Pass-Filter.png" alt="Ideal Low-pass Filter"></p>
 <h3 id="Gaussian-高斯滤波器"><a href="#Gaussian-高斯滤波器" class="headerlink" title="Gaussian 高斯滤波器"></a>Gaussian 高斯滤波器</h3><script type="math/tex; mode=display">
-H(u, v)=\exp({-D^2(u, v)/2{D_0}^2})</script><p><img src="/2023/02/17/suibi/image_lowpass_filtering/Untitled%201.png" alt="Untitled"></p>
+H(u, v)=\exp({-D^2(u, v)/2{D_0}^2})</script><p><img src="/2023/02/17/suibi/image_lowpass_filtering/Gaussian-Low-Pass-Filter.png" alt="Gaussian Low-pass Filter"></p>
 <h3 id="Butterworth-布特沃斯滤波器"><a href="#Butterworth-布特沃斯滤波器" class="headerlink" title="Butterworth 布特沃斯滤波器"></a>Butterworth 布特沃斯滤波器</h3><script type="math/tex; mode=display">
 H(u, v)=\frac{1}{1+[D(u, v)/D_0]^{2n}}</script><p>where <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.357ex" height="1.025ex" role="img" focusable="false" viewbox="0 -442 600 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g></g></g></svg></mjx-container> is the order of the Butterworth filter.</p>
 <p>With a higher <mjx-container class="MathJax" jax="SVG"><svg style="vertical-align: -0.025ex;" xmlns="http://www.w3.org/2000/svg" width="1.357ex" height="1.025ex" role="img" focusable="false" viewbox="0 -442 600 453"><g stroke="currentColor" fill="currentColor" stroke-width="0" transform="scale(1,-1)"><g data-mml-node="math"><g data-mml-node="mi"><path data-c="1D45B" d="M21 287Q22 293 24 303T36 341T56 388T89 425T135 442Q171 442 195 424T225 390T231 369Q231 367 232 367L243 378Q304 442 382 442Q436 442 469 415T503 336T465 179T427 52Q427 26 444 26Q450 26 453 27Q482 32 505 65T540 145Q542 153 560 153Q580 153 580 145Q580 144 576 130Q568 101 554 73T508 17T439 -10Q392 -10 371 17T350 73Q350 92 386 193T423 345Q423 404 379 404H374Q288 404 229 303L222 291L189 157Q156 26 151 16Q138 -11 108 -11Q95 -11 87 -5T76 7T74 17Q74 30 112 180T152 343Q153 348 153 366Q153 405 129 405Q91 405 66 305Q60 285 60 284Q58 278 41 278H27Q21 284 21 287Z"/></g></g></g></svg></mjx-container>, the filter is sharper, which approachs more to the ideal filter; otherwise it approaches to the gaussian filter.</p>
-<p><img src="/2023/02/17/suibi/image_lowpass_filtering/Untitled%202.png" alt="Untitled"></p>
+<p><img src="/2023/02/17/suibi/image_lowpass_filtering/Butterworth-Low-Pass-Filter.png" alt="Butterworth Low-pass Filter"></p>
 <h2 id="Usage-Example"><a href="#Usage-Example" class="headerlink" title="Usage Example"></a>Usage Example</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> preprocess <span class="keyword">import</span> ideal_bandpass, butterworth, gaussian</span><br><span class="line"></span><br><span class="line">cutoff = <span class="number">20</span> <span class="comment"># D0</span></span><br><span class="line"></span><br><span class="line">img_tensor = torch.randn((<span class="number">1</span>, <span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>)) <span class="comment"># change it to your image tensor</span></span><br><span class="line"></span><br><span class="line">img_lowpass = ideal_bandpass(img_tensor, cutoff) <span class="comment"># lowpass=False for high-pass.</span></span><br><span class="line"></span><br><span class="line">img_lowpass = butterworth(img_tensor, cutoff, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">img_lowpass = gaussian(img_tensor, cutoff)</span><br></pre></td></tr></table></figure>
 <h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>Gonzalez R C. Digital image processing[M]. Pearson education india, 2009.</p>
 
@@ -312,7 +312,7 @@ H(u, v)=\frac{1}{1+[D(u, v)/D_0]^{2n}}</script><p>where <mjx-container class="Ma
     <li><img class="author" title="About me" src="/images/coffee_onetwo.jpg" /></li>
     
     
-    <li>Hi, LuYongjian! LYJNB!</li>
+    <li>苟日新，日日新，又日新。</li>
     
   </ul>
 </div>
@@ -493,21 +493,5 @@ H(u, v)=\frac{1}{1+[D(u, v)/D_0]^{2n}}</script><p>where <mjx-container class="Ma
 
 
   </div>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
-<script src="//cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </body>
 </html>
