@@ -1,5 +1,5 @@
 ---
-title: 每周分享：Wav2Vec2语音识别模型微调代码实现、加语言模型推理
+title: 每周：Wav2Vec2语音识别模型微调代码实现、加语言模型推理
 date: 2023-09-09 16:07:03
 categories: [随笔]
 tags: [神经网络, 深度学习, Wav2Vec2, 语音识别, 语言模型]
@@ -16,6 +16,12 @@ GitHub仓库：https://github.com/CassiniHuy/wav2vec2_finetune
 - 给定有标签的数据集，给定一个huggingface上的wav2vec2本地或远程仓库id，能够方便地进行微调
 - 数据集可能是自己收集的、也可能是huggingface上的
 - 测试时候，能使用语言模型提高性能
+
+# CTC+语言模型
+
+Wav2Vec2本身是一个CTC的语言模型，输出的是每个token的概率，也就是[batch, time, token]这类形状的logits。
+
+而我们要接入的语言模型是自回归的，接受前文，预测下文，可以评估不同解码结果的出现概率大小，从而得到最有可能的解码输出，提高性能。
 
 # 具体实现
 
