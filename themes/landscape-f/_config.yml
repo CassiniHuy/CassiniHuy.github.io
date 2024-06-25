@@ -2,6 +2,10 @@
 menu:
   Home: /
   Archives: /archives
+  About: /about
+  # Tags: /tags
+  # Categories: /categories
+  bilibili: https://space.bilibili.com/85520747
 # rss: /atom.xml
 github: https://github.com/CassiniHuy
 # banner: "images/banner.jpg"
@@ -56,8 +60,6 @@ baidushare: true
 links:
 - name: Zhiyu's Blog 
   link: https://qgrain.github.io/
-- name: CassiniHuy's Github
-  link: https://github.com/CassiniHuy
 - name: 中文马克思主义文库
   link: https://www.marxists.org/chinese/marx/index.htm
 - name: 汉典
