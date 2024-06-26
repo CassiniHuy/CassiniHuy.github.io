@@ -96,7 +96,7 @@ valine:
   appKey: glFUguQG84y2GTeKhQR0RNAX
   notify: true # Mail notifier
   verify: true # Verification code
-  placeholder: Feel free to comment but new comment notification is disabled. Please contact me by cassiniwei@outlook.com if needed. # Comment box placeholder
+  placeholder: New comment notification enabled! Feel free to comment. # Comment box placeholder
   avatar: mm # Gravatar style
   guest_info: nick,mail,link # Custom comment header
   pageSize: 10 # Pagination size
