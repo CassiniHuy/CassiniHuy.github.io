@@ -20,8 +20,8 @@
 <meta property="article:modified_time" content="2023-02-17T06:55:48.112Z">
 <meta property="article:author" content="cassiniwei@outlook.com">
 <meta property="article:tag" content="深度学习">
-<meta property="article:tag" content="后门攻击">
 <meta property="article:tag" content="对抗攻击">
+<meta property="article:tag" content="后门攻击">
 <meta property="article:tag" content="数据投毒">
 <meta property="article:tag" content="视频">
 <meta name="twitter:card" content="summary">
@@ -500,7 +500,7 @@ mjx-container[display="true"] + br {
 
 
   
-<script src="https://cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+<script src="https://code.bdstatic.com/npm/leancloud-storage@4.12.0/dist/av-min.js"></script>
 
 <script>
     var GUEST_INFO = ['nick','mail','link'];
@@ -524,5 +524,23 @@ mjx-container[display="true"] + br {
 
 
   </div>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<!-- <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> -->
+<script src="//cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+
 </body>
 </html>
