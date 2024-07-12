@@ -70,7 +70,7 @@ s.setAttribute('data-timestamp', +new Date());
         pageSize:'<%= theme.valine.pageSize %>',
         avatar:'<%= theme.valine.avatar %>',
         lang:'<%= theme.valine.lang %>',
-        serverURLs: '{{ theme.valine.serverURLs }}'
+        serverURLs: "<%= theme.valine.serverURLs %>"
     });
 </script>
 <% } %>
