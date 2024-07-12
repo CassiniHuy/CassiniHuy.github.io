@@ -568,6 +568,9 @@ p(\mathbf{o}|\lambda)
   
 <script src="https://code.bdstatic.com/npm/leancloud-storage@4.12.0/dist/av-min.js"></script>
 
+  
+<script src="https://unpkg.com/valine/dist/Valine.min.js"></script>
+
 <script>
     var GUEST_INFO = ['nick','mail','link'];
     var guest_info = 'nick,mail,link'.split(',').filter(function(item){
@@ -584,7 +587,8 @@ p(\mathbf{o}|\lambda)
         placeholder: "Comment notification enabled! Feel free to comment.",
         pageSize:'10',
         avatar:'mm',
-        lang:''
+        lang:'',
+        serverURLs: '{{ theme.valine.serverURLs }}'
     });
 </script>
 
