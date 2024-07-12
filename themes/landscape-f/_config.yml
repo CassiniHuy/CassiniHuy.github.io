@@ -71,7 +71,7 @@ about_me:
   gravatar: cassiniwei@outlook.com
   avatar: /images/coffee_onetwo.jpg
   texts:
-  - 苟日新，日日新，又日新。
+  - The must have been a door there in the wall, when I came in.
 
 # display updated
 display_updated: false
@@ -92,11 +92,13 @@ mathjax:
 # valine comment system. https://valine.js.org
 valine:
   enable: true
-  appId: sA5b5bSKVOumVxcKtX8NUqFk-gzGzoHsz
-  appKey: glFUguQG84y2GTeKhQR0RNAX
+  appId: t2m58rhzOMoJTD21pEaJ5gHJ-MdYXbMMI
+  appKey: FCXmx3W5LaZfCPys3TBd1uul
+  # appId: sA5b5bSKVOumVxcKtX8NUqFk-gzGzoHsz
+  # appKey: glFUguQG84y2GTeKhQR0RNAX
   notify: true # Mail notifier
   verify: true # Verification code
-  placeholder: New comment notification enabled! Feel free to comment. # Comment box placeholder
+  placeholder: Comment notification enabled! Feel free to comment. # Comment box placeholder
   avatar: mm # Gravatar style
   guest_info: nick,mail,link # Custom comment header
   pageSize: 10 # Pagination size
@@ -104,5 +106,5 @@ valine:
   visitor: true # Article reading statistic
   comment_count: true # If false, comment count will only be displayed in post page, not in home page
   recordIP: true # Whether to record the commenter IP
-  serverURLs: # When the custom domain name is enabled, fill it in here (it will be detected automatically by default, no need to fill in)
+  serverURLs: https://t2m58rhz.api.lncldglobal.com # When the custom domain name is enabled, fill it in here (it will be detected automatically by default, no need to fill in)
   #post_meta_order: 0
