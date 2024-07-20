@@ -98,7 +98,7 @@ valine:
   # appKey: glFUguQG84y2GTeKhQR0RNAX
   notify: true # Mail notifier
   verify: true # Verification code
-  placeholder: Comment notification enabled! Feel free to comment. # Comment box placeholder
+  placeholder: Comment notification enabled! Fill in your E-Mail address so you can get notified when there is a reply. # Comment box placeholder
   avatar: mm # Gravatar style
   guest_info: nick,mail,link # Custom comment header
   pageSize: 10 # Pagination size

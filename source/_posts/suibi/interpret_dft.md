@@ -21,7 +21,7 @@ Let’s denote the input as $x_0,x_1,\cdots,x_{n-1}$, and the output as $y_0,y_2
 
 We can observe something about the result from *fft*:
 
-- While more entries are complex numbers, the first entry $y_0$ is always a real number (i.e., the imaginary part is zero).
+- While most entries are complex numbers, the first entry $y_0$ is always a real number (i.e., the imaginary part is zero).
 - Moreover, when the vector length $n$ is even, the $y_{n/2}$ is also a real number.
 - $y_t$ and $y_{n-t}$ are conjugates of each other, for $1\le t \le n-1$.
 
