@@ -31,12 +31,12 @@ mathjax: true
 
 根据上面的定义，可以给出计算方法：
 
-$$p(s_0,s_1,\cdots,s_T)=
-\prod_{t=1}^T p(s_t|s_{t-1})p(s_0)$$
+$$p(s_0,s_1,\cdots,s_T)=\prod_{t=1}^T p(s_t|s_{t-1})p(s_0)$$
 
 可以看出其是一环套一环的计算，所以称之为“链”：
 
 $$s_0\to s_1 \to s_2 \to s_3 \to \cdots \to s_T $$
+
 $$p(s_0)\times p(s_1|s_0)\times p(s_2|s_1)\times p(s_3|s_2)\times\cdots\times p(s_T|s_{T-1})$$
 
 ## 模型组成：三元组
@@ -50,6 +50,7 @@ $$p(s_0)\times p(s_1|s_0)\times p(s_2|s_1)\times p(s_3|s_2)\times\cdots\times p(
 当然，要使计算出的概率具有实际的意义，则还需要满足归一化条件和非负的条件：
 
 $$\sum_i \pi_i=1,\quad \sum_j A_{ij}=1,\forall 1\le i\le n $$
+
 $$\pi_i>0, A_{ij}>0,\quad \forall 1\le i,j\le n$$
 
 # 隐马尔可夫模型
@@ -98,11 +99,7 @@ A和B的区别，在于A用以描述隐藏状态之间的转化关系；B用以�
 
 设这个T个观察到的状态，其背后隐藏的状态序列为$\mathbf{s}=s_1,\cdots,s_T$，则根据隐马尔可夫模型的定义，当然可以这么算：
 
-$$\begin{aligned}
-p(\mathbf{o}|\lambda)
-&=\sum_{\mathbf{s}}p(\mathbf{o}|\mathbf{s},\lambda)\\
-&=\sum_{\mathbf{s}} p(\mathbf{s})\cdot p(\mathbf{o}|\mathbf{s})
-\end{aligned}\\$$
+$$\begin{aligned}p(\mathbf{o}|\lambda)&=\sum_{\mathbf{s}}p(\mathbf{o}|\mathbf{s},\lambda)\\&=\sum_{\mathbf{s}} p(\mathbf{s})\cdot p(\mathbf{o}|\mathbf{s})\end{aligned}\\$$
 
 即是遍历隐藏状态序列$\mathbf{s}$的所有的$n^T$种可能，然后计算其每一种隐藏状态序列输出此观测序列的概率值：
 
@@ -121,47 +118,27 @@ $$p(o^{t,T}|s^{t,T})=p(o^{t+1,T}|s^{t+1,T})\cdot p(o^t|s^t)$$
 又由马尔科夫链的性质：
 
 $$p(s^{1,T})=p(s^{2,T}|s_1)\cdot p(s_1),\quad t=1$$
+
 $$p(s^{t,T})=p(s^{t+1,T})\cdot p(s_t|s_{t-1}),\quad t>1$$
+
 $$p(s^{T,T})=p(s^T|s^{T-1}),\quad t=T$$
 
 则可以利用上面两个式子按时间步依次展开，得到如下前向计算过程：
 
-$$\begin{aligned}
-p(\mathbf{o}|\lambda)
-&=\sum_{\mathbf{s}} p(\mathbf{s})p(\mathbf{o}|\mathbf{s})=\sum_{s_{1,T}}p(s^{1,T})p(o^{1,T}|s^{1,T})\\
-&=\sum_{s_1=S_1}^{S_n} \big(p(s_1)p( o_1|s_1)\big)\cdot p(s^{2,T})p(o^{2,T}|s^{2,T})\\
-p(\mathbf{o}|\lambda)&=\sum_{s_1=S_1}^{S_n}\delta_1[s_1] \cdot p(s^{2,T}|s_1)p(o^{2,T}|s^{2,T})\\
-\end{aligned}$$
+$$\begin{aligned}p(\mathbf{o}|\lambda) &=\sum_{\mathbf{s}} p(\mathbf{s})p(\mathbf{o}|\mathbf{s})=\sum_{s_{1,T}}p(s^{1,T})p(o^{1,T}|s^{1,T})\\ &=\sum_{s_1=S_1}^{S_n} \big(p(s_1)p( o_1|s_1)\big)\cdot p(s^{2,T})p(o^{2,T}|s^{2,T})\\ p(\mathbf{o}|\lambda)&=\sum_{s_1=S_1}^{S_n}\delta_1[s_1] \cdot p(s^{2,T}|s_1)p(o^{2,T}|s^{2,T})\\ \end{aligned}$$
 
 1. 记$\delta_1[s_1]\triangleq p(s_1)p(o_1|s_1)$，遍历$s_1$算出n个值；n次计算。
 
-$$\begin{aligned}
-p(\mathbf{o}|\lambda)
-
-&=\sum_{s_1=S_1}^{S_n} \delta_1[s_1]\sum_{s_2=S_1}^{S_n}p(s_2|s_1)p(s^{3,T})p(o_2|s_2) p(o^{3,T}|s^{3,T})\\
-&=\sum_{s_2=S_1}^{S_n}\big (\sum_{s_1=S_1}^{S_n}\delta_1[s_1]p(s_2|s_1)p(o_2|s_2)\big ) \cdot p(s^{3,T})p(o^{3,T}|s^{3,T})\\
-p(\mathbf{o}|\lambda)&=\sum_{s_2=S_1}^{S_n}\delta_2[s_2] \cdot p(s^{3,T})p(o^{3,T}|s^{3,T})
-\end{aligned}$$
+$$\begin{aligned} p(\mathbf{o}|\lambda) &=\sum_{s_1=S_1}^{S_n} \delta_1[s_1]\sum_{s_2=S_1}^{S_n}p(s_2|s_1)p(s^{3,T})p(o_2|s_2) p(o^{3,T}|s^{3,T})\\ &=\sum_{s_2=S_1}^{S_n}\big (\sum_{s_1=S_1}^{S_n}\delta_1[s_1]p(s_2|s_1)p(o_2|s_2)\big ) \cdot p(s^{3,T})p(o^{3,T}|s^{3,T})\\ p(\mathbf{o}|\lambda)&=\sum_{s_2=S_1}^{S_n}\delta_2[s_2] \cdot p(s^{3,T})p(o^{3,T}|s^{3,T}) \end{aligned}$$
 
 1. 记$\delta_2[s_2]=\sum_{s_1=S_1}^{S_n}\delta_1[s_1]p(s_2|s_1)p(o_2|s_2)$，遍历$s_2$算出n个值；$n^2$次计算。
 
-$$\begin{aligned}
-p(\mathbf{o}|\lambda)
-&=\sum_{s_2=S_1}^{S_n}\delta_2[s_2]\sum_{s_3=S_1}^{S_n}p(s_3)p(s^{4,T})p(o_3|s_3)p(o^{4,T}|s^{4,T})\\
-&=\sum_{s_3=S_1}^{S_n}\big( 
-\sum_{s_2=S_1}^{S_n}\delta_2[s_2]p(s_3|s_2)p(o_3|s_3)
- \big)\cdot p(s^{4,T})p(o^{3,T}|s^{3,T})\\
-&=\sum_{s_3=S_1}^{S_n}\delta_3[s_3]p(s^{4,T})p(o^{3,T}|s^{3,T})
-\end{aligned}$$
+$$\begin{aligned} p(\mathbf{o}|\lambda) &=\sum_{s_2=S_1}^{S_n}\delta_2[s_2]\sum_{s_3=S_1}^{S_n}p(s_3)p(s^{4,T})p(o_3|s_3)p(o^{4,T}|s^{4,T})\\ &=\sum_{s_3=S_1}^{S_n}\big(  \sum_{s_2=S_1}^{S_n}\delta_2[s_2]p(s_3|s_2)p(o_3|s_3)  \big)\cdot p(s^{4,T})p(o^{3,T}|s^{3,T})\\ &=\sum_{s_3=S_1}^{S_n}\delta_3[s_3]p(s^{4,T})p(o^{3,T}|s^{3,T}) \end{aligned}$$
 
 1. 记$\delta_3[s_3]=\sum_{s_2=S_1}^{S_n}\delta_2[s_2]p(s_3|s_2)p(o_3|s_3)$，遍历$s_3$算出n个值；$n^2$次计算。
 2. 从2到T都同理，直到算到：
 
-$$\begin{aligned}
-p(\mathbf{o}|\lambda)
-&=\sum_{s_T=S_1}^{S_n}\delta_{T-1}[s_{T-1}]p(s_T|s_{T-1})p(o_T|s_T)\\
-&=\sum_{s_T=S_1}^{S^n}\delta_T[s_T]
-\end{aligned}$$
+$$\begin{aligned} p(\mathbf{o}|\lambda) &=\sum_{s_T=S_1}^{S_n}\delta_{T-1}[s_{T-1}]p(s_T|s_{T-1})p(o_T|s_T)\\ &=\sum_{s_T=S_1}^{S^n}\delta_T[s_T] \end{aligned}$$
 
 1. 可以看出，从$\delta_1$到$\delta_T$，再到最后算出概率值，计算复杂度是$n^2T$
 
