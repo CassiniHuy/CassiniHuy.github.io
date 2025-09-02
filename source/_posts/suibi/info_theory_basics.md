@@ -1,12 +1,12 @@
 ---
-title: 关于信息论的一些基础常识
+title: 关于信息论的一些常识
 date: 2025-08-18 10:54:01
 categories: [随笔]
 tags: [信息论]
 mathjax: true
 ---
 
-这是一些关于信息论（Information Theory）的基本知识 (几乎是常识) 的笔记。我在这里写下来，这样当我忘记它们时，我在这个笔记中迅速取得思路。
+这里梳理了一些关于信息论（Information Theory）的基本知识 (几乎是常识) 的笔记。
 
 Reference: *Cover, Thomas M. Elements of information theory (Chapter 2). John Wiley & Sons, 1999.*
 
