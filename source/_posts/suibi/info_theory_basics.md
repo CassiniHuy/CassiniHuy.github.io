@@ -6,7 +6,7 @@ tags: [信息论]
 mathjax: true
 ---
 
-这里梳理了一些关于信息论（Information Theory）的基本知识 (几乎是常识) 的笔记。
+这里梳理了一些关于信息论（Information Theory）的基本知识 (几乎是常识) 。
 
 Reference: *Cover, Thomas M. Elements of information theory (Chapter 2). John Wiley & Sons, 1999.*
 

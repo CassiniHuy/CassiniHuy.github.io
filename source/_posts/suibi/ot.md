@@ -1,5 +1,5 @@
 ---
-title: Overview on Techniques in OT (Oblivious Transfer) and Its Extension
+title: Brief Introduction on Techniques in OT (Oblivious Transfer) and Its Extension
 date: 2025-09-03 01:08:33
 categories: [随笔]
 tags: [安全多方计算, OT, IKNP]
@@ -7,7 +7,7 @@ mathjax: true
 ---
 
 
-这里从一个较为通顺的视角去理解OT及其相关的拓展(extension)技术，包括OT, ROT, COT, IKNP OT extension，以及简单解释VOLE如何用以解决OT extension问题。
+这里从一个较为通顺的视角去理解OT及其相关的拓展(extension)技术，包括OT, ROT, COT, IKNP OT extension，以及简单提到VOLE OT。
 
 Ref:
 
@@ -103,7 +103,7 @@ OT应该怎么用呢？乍一眼看起来它所实现的并不是一个很通用
 
 所谓ROT即是Sender发送的两个消息是（伪）随机消息的情况（记为$r_0, r_1\in \{0,1\}^l$）。
 
-如果我们需要$m$次发送$l$比特的OT（记为$OT^m_l$），我们可以通过$m$次发送$l$比特的ROT实现（记为$ROT^m_l$）；只需要每次OT基于一个ROT来实现即可。比如先进行一次ROT，Sender发送$r_0,r_1$，Receiver的选择是$b$；然后Sender发送两条加密消息$r_0\oplus x_0,r_1\oplus x_1$，Receiver使用对于的$r_b$解密即可获得对应的消息。
+如果我们需要$m$次发送$l$比特的OT（记为$OT^m_l$），我们可以通过$m$次发送$l$比特的ROT实现（记为$ROT^m_l$）；只需要每次OT基于一个ROT来实现即可。比如先进行一次ROT，Sender发送$r_0,r_1$，Receiver的选择是$b$；然后Sender发送两条加密消息$r_0\oplus x_0,r_1\oplus x_1$，Receiver使用对应的$r_b$解密即可获得对应的消息。
 
 上面的例子需要ROT和后续消息发送基于一样的Receiver选择$b$，实际上可以基于不同的Receiver选择实现；这样可以将计算量大的公钥加密提前到双方各自的输入被决定前进行。实现的方式也很简单，假如ROT阶段的Receiver随机使用一个选择$a\in\{0,1\}$，在实际发送消息阶段，Receiver再发一个$c=a\oplus b$给Sender；如果$c$是1，说明Receiver选择变了，Sender调换一下消息的顺序，变为$(x_1,x_0)$，否则不变。注意这里并不会泄露$a$或$b$，Sender仅仅通过$c$看不出Receiver每次具体的选择是什么。
 
